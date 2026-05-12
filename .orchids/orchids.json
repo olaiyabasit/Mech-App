@@ -1,0 +1,7 @@
+{
+  "startupCommands": [
+    "pip install -r requirements.txt; DJANGO_SETTINGS_MODULE=winki_project.settings.development python manage.py migrate && python build_tailwind.py && DJANGO_SETTINGS_MODULE=winki_project.settings.development python manage.py runserver 0.0.0.0:8000"
+  ],
+  "projectId": "037bae34-1327-4cb3-ad83-10b012d5dc01",
+  "templateId": "any"
+}
