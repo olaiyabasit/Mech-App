@@ -1,5 +1,6 @@
 from .base import *
 import os
+import dj_database_url
 
 # Security Settings for Production
 DEBUG = False
@@ -16,29 +17,14 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 X_FRAME_OPTIONS = 'DENY'
 
-# Database Configuration for Vercel
+# Database Configuration
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DATABASE'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': os.environ.get('POSTGRES_HOST'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
-    }
+    'default': dj_database_url.config(env='DATABASE_URL', conn_max_age=600)
 }
 
 # Static Files for Production
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
-# Media Files (if using Vercel Blob Storage)
-if os.environ.get('BLOB_READ_WRITE_TOKEN'):
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    AWS_ACCESS_KEY_ID = os.environ.get('BLOB_READ_WRITE_TOKEN')
-    AWS_SECRET_ACCESS_KEY = os.environ.get('BLOB_READ_WRITE_TOKEN')
-    AWS_STORAGE_BUCKET_NAME = os.environ.get('BLOB_STORE_ID')
-    AWS_S3_ENDPOINT_URL = 'https://blob.vercel-storage.com'
 
 # Logging
 LOGGING = {
