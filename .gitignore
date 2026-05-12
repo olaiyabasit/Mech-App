@@ -42,6 +42,9 @@ ehthumbs.db
 Thumbs.db
 
 # Environment variables
+.env
+.env.local
+.env.production
 
 # Node modules (if using npm version of Tailwind)
 node_modules/
@@ -50,7 +53,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Tailwind build
-theme/static/
+# theme/static/ is committed so Railway has the compiled CSS
 
 # Coverage reports
 htmlcov/
@@ -85,5 +88,4 @@ wheels/
 # Temporary files
 *.tmp
 *.bak
-*.orignode_modules
-.venv
+*.orig

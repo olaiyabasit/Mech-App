@@ -1,217 +1,232 @@
 {% extends 'base.html' %}
 
-{% block title %}Reports & Analytics — WInki{% endblock %}
-{% block page_name %}Reports & Analytics{% endblock %}
+{% block title %}Reports Dashboard - WInki Professional{% endblock %}
+
+{% block main_classes %}py-8{% endblock %}
 
 {% block content %}
-
-<!-- ── Page header ── -->
-<div style="margin-bottom:1.625rem;">
-  <h1 class="page-title">Reports & Analytics</h1>
-  <p class="page-sub">Generate professional reports and export your business data</p>
-</div>
-
-<!-- ── KPI summary row ── -->
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;">
-
-  <div class="kpi-card kv animate-fade-in-up" style="animation-delay:.04s">
-    <div class="kpi-icon ki-v"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
-    <div class="kpi-label">Total Jobs</div>
-    <div class="kpi-value">{{ total_jobs }}</div>
-    <div class="kpi-hint">All time records</div>
-  </div>
-
-  <div class="kpi-card kg animate-fade-in-up" style="animation-delay:.08s">
-    <div class="kpi-icon ki-g"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-    <div class="kpi-label">Total Revenue</div>
-    <div class="kpi-value">${{ total_revenue|floatformat:0 }}</div>
-    <div class="kpi-hint">Lifetime earnings</div>
-  </div>
-
-  <div class="kpi-card ks animate-fade-in-up" style="animation-delay:.12s">
-    <div class="kpi-icon ki-s"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
-    <div class="kpi-label">Collection Rate</div>
-    <div class="kpi-value">{{ collection_rate|floatformat:1 }}%</div>
-    <div class="kpi-hint">Payment efficiency</div>
-  </div>
-
-  <div class="kpi-card ka animate-fade-in-up" style="animation-delay:.16s">
-    <div class="kpi-icon ki-a"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div>
-    <div class="kpi-label">Outstanding</div>
-    <div class="kpi-value">${{ outstanding_balance|floatformat:0 }}</div>
-    <div class="kpi-hint">Pending collections</div>
-  </div>
-
-</div>
-
-<!-- ── Export cards ── -->
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
-
-  <!-- PDF Reports -->
-  <div class="card animate-fade-in-up" style="animation-delay:.2s">
-
-    <!-- Header -->
-    <div style="display:flex;align-items:center;gap:.875rem;padding-bottom:1.125rem;border-bottom:1px solid #e4e8ef;margin-bottom:1.125rem;">
-      <div style="width:2.5rem;height:2.5rem;border-radius:.625rem;background:#fdd8d8;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="18" height="18" fill="none" stroke="#cf2020" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-      </div>
-      <div>
-        <div style="font-size:.9375rem;font-weight:600;color:#1e2534;">PDF Reports</div>
-        <div style="font-size:.8125rem;color:#96a3b8;margin-top:.125rem;">Print-ready professional documents</div>
-      </div>
-    </div>
-
-    <!-- Items -->
-    <div style="display:flex;flex-direction:column;gap:.625rem;">
-
-      <a href="{% url 'reports:jobs_pdf' %}"
-         style="display:flex;align-items:center;justify-content:space-between;padding:.875rem 1rem;background:#f9fafb;border:1px solid #e4e8ef;border-radius:.625rem;transition:all .15s;text-decoration:none;"
-         onmouseover="this.style.background='#f2f4f8';this.style.borderColor='#c4ccda';"
-         onmouseout="this.style.background='#f9fafb';this.style.borderColor='#e4e8ef';">
-        <div style="display:flex;align-items:center;gap:.75rem;">
-          <div style="width:2rem;height:2rem;background:#5e56ec;border-radius:.5rem;display:flex;align-items:center;justify-content:center;">
-            <svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-          </div>
-          <div>
-            <div style="font-size:.875rem;font-weight:600;color:#1e2534;">Jobs Report</div>
-            <div style="font-size:.75rem;color:#96a3b8;margin-top:.125rem;">All jobs with summary stats</div>
-          </div>
+<!-- Reports Header -->
+<section class="py-16 bg-gradient-to-br from-off-white via-light-gray to-off-white overflow-hidden">
+    <div class="container-cinematic">
+        <div class="flex-between flex-wrap gap-6 mb-8">
+            <div class="animate-slide-in">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-3 h-16 bg-gradient-to-b from-pure-black to-charcoal rounded-full"></div>
+                    <div>
+                        <h1 class="text-6xl xl:text-7xl font-black text-transparent bg-gradient-to-r from-pure-black via-graphite to-charcoal bg-clip-text leading-tight">
+                            Reports & Analytics
+                        </h1>
+                        <div class="h-1 w-32 bg-gradient-to-r from-pure-black via-charcoal to-transparent rounded-full mt-2"></div>
+                    </div>
+                </div>
+                <p class="text-xl text-pewter mt-4 font-medium">
+                    Export data and generate professional reports
+                </p>
+            </div>
         </div>
-        <span style="background:#fdd8d8;color:#cf2020;font-size:.6875rem;font-weight:700;padding:.25rem .5rem;border-radius:.375rem;letter-spacing:.03em;">PDF</span>
-      </a>
+    </div>
+</section>
 
-      <a href="{% url 'reports:financial_pdf' %}"
-         style="display:flex;align-items:center;justify-content:space-between;padding:.875rem 1rem;background:#f9fafb;border:1px solid #e4e8ef;border-radius:.625rem;transition:all .15s;text-decoration:none;"
-         onmouseover="this.style.background='#f2f4f8';this.style.borderColor='#c4ccda';"
-         onmouseout="this.style.background='#f9fafb';this.style.borderColor='#e4e8ef';">
-        <div style="display:flex;align-items:center;gap:.75rem;">
-          <div style="width:2rem;height:2rem;background:#10a065;border-radius:.5rem;display:flex;align-items:center;justify-content:center;">
-            <svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-          <div>
-            <div style="font-size:.875rem;font-weight:600;color:#1e2534;">Financial Report</div>
-            <div style="font-size:.75rem;color:#96a3b8;margin-top:.125rem;">Revenue, collections & balance</div>
-          </div>
+<!-- Summary Statistics -->
+<section class="py-12">
+    <div class="container-cinematic">
+        <div class="grid-cinematic grid-auto-fit mb-16">
+            <div class="card-stats-enhanced animate-fade-in-up" style="animation-delay: 0.1s;">
+                <div class="text-center">
+                    <h3 class="text-lg font-semibold text-pewter mb-4">Total Jobs</h3>
+                    <div class="text-4xl font-black text-pure-black mb-2">{{ total_jobs }}</div>
+                    <div class="text-sm text-slate">All jobs in system</div>
+                </div>
+            </div>
+
+            <div class="card-stats-enhanced animate-fade-in-up" style="animation-delay: 0.2s;">
+                <div class="text-center">
+                    <h3 class="text-lg font-semibold text-pewter mb-4">Total Revenue</h3>
+                    <div class="text-4xl font-black text-pure-black mb-2">${{ total_revenue|floatformat:0 }}</div>
+                    <div class="text-sm text-slate">Lifetime earnings</div>
+                </div>
+            </div>
+
+            <div class="card-stats-enhanced animate-fade-in-up" style="animation-delay: 0.3s;">
+                <div class="text-center">
+                    <h3 class="text-lg font-semibold text-pewter mb-4">Collection Rate</h3>
+                    <div class="text-4xl font-black text-pure-black mb-2">{{ collection_rate|floatformat:1 }}%</div>
+                    <div class="text-sm text-slate">Payment efficiency</div>
+                </div>
+            </div>
+
+            <div class="card-stats-enhanced animate-fade-in-up" style="animation-delay: 0.4s;">
+                <div class="text-center">
+                    <h3 class="text-lg font-semibold text-pewter mb-4">Outstanding</h3>
+                    <div class="text-4xl font-black text-pure-black mb-2">${{ outstanding_balance|floatformat:0 }}</div>
+                    <div class="text-sm text-slate">Pending collections</div>
+                </div>
+            </div>
         </div>
-        <span style="background:#fdd8d8;color:#cf2020;font-size:.6875rem;font-weight:700;padding:.25rem .5rem;border-radius:.375rem;letter-spacing:.03em;">PDF</span>
-      </a>
-
     </div>
+</section>
 
-    <!-- Feature list -->
-    <div style="margin-top:1rem;padding:.875rem;background:#f9fafb;border-radius:.625rem;border:1px solid #e4e8ef;">
-      <p style="font-size:.75rem;font-weight:600;color:#4a566a;margin:0 0 .5rem;">Includes:</p>
-      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.3125rem;">
-          <li style="font-size:.75rem;color:#6b7a92;display:flex;align-items:center;gap:.375rem;"><span style="color:#10a065;font-weight:700;">✓</span> Professional formatting</li>
-        <li style="font-size:.75rem;color:#6b7a92;display:flex;align-items:center;gap:.375rem;"><span style="color:#10a065;font-weight:700;">✓</span> Summary statistics</li>
-        <li style="font-size:.75rem;color:#6b7a92;display:flex;align-items:center;gap:.375rem;"><span style="color:#10a065;font-weight:700;">✓</span> Detailed data tables</li>
-        <li style="font-size:.75rem;color:#6b7a92;display:flex;align-items:center;gap:.375rem;"><span style="color:#10a065;font-weight:700;">✓</span> Print-ready format</li>
-      </ul>
-    </div>
+<!-- Export Options -->
+<section class="py-12">
+    <div class="container-cinematic">
+        <div class="grid lg:grid-cols-2 gap-12">
+            
+            <!-- PDF Reports -->
+            <div class="card-cinematic animate-fade-in-up" style="animation-delay: 0.5s;">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <span class="text-3xl mr-3">📄</span>
+                    PDF Reports
+                </h2>
+                
+                <div class="space-y-4">
+                    <a href="{% url 'reports:jobs_pdf' %}" 
+                       class="btn-cinematic-primary w-full flex items-center justify-between group">
+                        <span class="flex items-center space-x-3">
+                            <span>📋</span>
+                            <span>Jobs Report</span>
+                        </span>
+                        <span class="text-sm opacity-75 group-hover:opacity-100">PDF</span>
+                    </a>
+                    
+                    <a href="{% url 'reports:financial_pdf' %}" 
+                       class="btn-cinematic-primary w-full flex items-center justify-between group">
+                        <span class="flex items-center space-x-3">
+                            <span>💰</span>
+                            <span>Financial Report</span>
+                        </span>
+                        <span class="text-sm opacity-75 group-hover:opacity-100">PDF</span>
+                    </a>
+                </div>
+                
+                <div class="mt-6 p-4 bg-light-gray border border-medium-gray rounded-lg">
+                    <h4 class="font-semibold mb-2">PDF Features:</h4>
+                    <ul class="text-sm text-slate space-y-1">
+                        <li>• Professional formatting</li>
+                        <li>• Summary statistics</li>
+                        <li>• Detailed data tables</li>
+                        <li>• Print-ready format</li>
+                    </ul>
+                </div>
+            </div>
 
-  </div>
-
-  <!-- CSV Exports -->
-  <div class="card animate-fade-in-up" style="animation-delay:.24s">
-
-    <div style="display:flex;align-items:center;gap:.875rem;padding-bottom:1.125rem;border-bottom:1px solid #e4e8ef;margin-bottom:1.125rem;">
-      <div style="width:2.5rem;height:2.5rem;border-radius:.625rem;background:#d1f5e5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="18" height="18" fill="none" stroke="#0d7a4a" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-      </div>
-      <div>
-        <div style="font-size:.9375rem;font-weight:600;color:#1e2534;">CSV / Data Exports</div>
-        <div style="font-size:.8125rem;color:#96a3b8;margin-top:.125rem;">Excel-compatible spreadsheet exports</div>
-      </div>
-    </div>
-
-    <div style="display:flex;flex-direction:column;gap:.625rem;">
-
-      <a href="{% url 'reports:customers_csv' %}"
-         style="display:flex;align-items:center;justify-content:space-between;padding:.875rem 1rem;background:#f9fafb;border:1px solid #e4e8ef;border-radius:.625rem;transition:all .15s;text-decoration:none;"
-         onmouseover="this.style.background='#f2f4f8';this.style.borderColor='#c4ccda';"
-         onmouseout="this.style.background='#f9fafb';this.style.borderColor='#e4e8ef';">
-        <div style="display:flex;align-items:center;gap:.75rem;">
-          <div style="width:2rem;height:2rem;background:#0475bb;border-radius:.5rem;display:flex;align-items:center;justify-content:center;">
-            <svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          </div>
-          <div>
-            <div style="font-size:.875rem;font-weight:600;color:#1e2534;">Customer Export</div>
-            <div style="font-size:.75rem;color:#96a3b8;margin-top:.125rem;">All customers with job history</div>
-          </div>
+            <!-- CSV Exports -->
+            <div class="card-cinematic animate-fade-in-up" style="animation-delay: 0.6s;">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <span class="text-3xl mr-3">📊</span>
+                    CSV Exports
+                </h2>
+                
+                <div class="space-y-4">
+                    <a href="{% url 'reports:customers_csv' %}" 
+                       class="btn-cinematic-secondary w-full flex items-center justify-between group">
+                        <span class="flex items-center space-x-3">
+                            <span>👥</span>
+                            <span>Customers Export</span>
+                        </span>
+                        <span class="text-sm opacity-75 group-hover:opacity-100">CSV</span>
+                    </a>
+                    
+                    <div class="btn-cinematic-ghost w-full flex items-center justify-between opacity-50 cursor-not-allowed">
+                        <span class="flex items-center space-x-3">
+                            <span>📈</span>
+                            <span>Jobs Export</span>
+                        </span>
+                        <span class="text-sm">Coming Soon</span>
+                    </div>
+                </div>
+                
+                <div class="mt-6 p-4 bg-light-gray border border-medium-gray rounded-lg">
+                    <h4 class="font-semibold mb-2">CSV Features:</h4>
+                    <ul class="text-sm text-slate space-y-1">
+                        <li>• Excel-compatible format</li>
+                        <li>• All data fields included</li>
+                        <li>• Easy data analysis</li>
+                        <li>• Import into other systems</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <span style="background:#d1f5e5;color:#0d7a4a;font-size:.6875rem;font-weight:700;padding:.25rem .5rem;border-radius:.375rem;letter-spacing:.03em;">CSV</span>
-      </a>
+    </div>
+</section>
 
-      <!-- Coming soon -->
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:.875rem 1rem;background:#f9fafb;border:1px solid #e4e8ef;border-radius:.625rem;opacity:.5;cursor:not-allowed;">
-        <div style="display:flex;align-items:center;gap:.75rem;">
-          <div style="width:2rem;height:2rem;background:#96a3b8;border-radius:.5rem;display:flex;align-items:center;justify-content:center;">
-            <svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-          </div>
-          <div>
-            <div style="font-size:.875rem;font-weight:600;color:#1e2534;">Jobs Export</div>
-            <div style="font-size:.75rem;color:#96a3b8;margin-top:.125rem;">Complete job records</div>
-          </div>
+<!-- Quick Stats -->
+<section class="py-12 bg-gradient-to-b from-light-gray to-off-white">
+    <div class="container-cinematic">
+        <div class="card-cinematic animate-fade-in-up">
+            <h2 class="text-2xl font-bold mb-8 text-center">Quick Statistics</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="text-3xl mb-2">👥</div>
+                    <div class="text-2xl font-bold text-pure-black">{{ total_customers }}</div>
+                    <div class="text-sm text-slate">Total Customers</div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="text-3xl mb-2">💳</div>
+                    <div class="text-2xl font-bold text-pure-black">{{ total_payments }}</div>
+                    <div class="text-sm text-slate">Total Payments</div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="text-3xl mb-2">💹</div>
+                    <div class="text-2xl font-bold text-pure-black">${{ total_collected|floatformat:0 }}</div>
+                    <div class="text-sm text-slate">Total Collected</div>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-8 border-t border-medium-gray text-center">
+                <p class="text-slate">
+                    <strong>Pro Tip:</strong> Use PDF reports for presentations and CSV exports for data analysis in Excel.
+                </p>
+            </div>
         </div>
-        <span style="background:#e4e8ef;color:#96a3b8;font-size:.6875rem;font-weight:700;padding:.25rem .5rem;border-radius:.375rem;letter-spacing:.03em;">Soon</span>
-      </div>
+    </div>
+</section>
+{% endblock %}
 
-    </div>
-
-    <div style="margin-top:1rem;padding:.875rem;background:#f9fafb;border-radius:.625rem;border:1px solid #e4e8ef;">
-      <p style="font-size:.75rem;font-weight:600;color:#4a566a;margin:0 0 .5rem;">Includes:</p>
-      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.3125rem;">
-          <li style="font-size:.75rem;color:#6b7a92;display:flex;align-items:center;gap:.375rem;"><span style="color:#10a065;font-weight:700;">✓</span> Excel-compatible format</li>
-        <li style="font-size:.75rem;color:#6b7a92;display:flex;align-items:center;gap:.375rem;"><span style="color:#10a065;font-weight:700;">✓</span> All data fields</li>
-        <li style="font-size:.75rem;color:#6b7a92;display:flex;align-items:center;gap:.375rem;"><span style="color:#10a065;font-weight:700;">✓</span> Easy data analysis</li>
-        <li style="font-size:.75rem;color:#6b7a92;display:flex;align-items:center;gap:.375rem;"><span style="color:#10a065;font-weight:700;">✓</span> Import to other tools</li>
-      </ul>
-    </div>
-
-  </div>
-
-</div>
-
-<!-- ── Quick stats summary ── -->
-<div class="card animate-fade-in-up" style="animation-delay:.28s">
-  <div class="card-hd"><span class="section-label">Quick Statistics</span></div>
-  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:.75rem;">
-    {% for stat in stats_list %}
-    <div style="text-align:center;padding:1rem .75rem;background:#f9fafb;border:1px solid #e4e8ef;border-radius:.75rem;">
-      <div style="font-size:1.5rem;font-weight:800;color:#1e2534;letter-spacing:-.02em;">{{ stat.value }}</div>
-      <div style="font-size:.75rem;font-weight:500;color:#6b7a92;margin-top:.25rem;">{{ stat.label }}</div>
-    </div>
-    {% empty %}
-    <div style="text-align:center;padding:1rem .75rem;background:#f9fafb;border:1px solid #e4e8ef;border-radius:.75rem;">
-      <div style="font-size:1.5rem;font-weight:800;color:#1e2534;">{{ total_customers }}</div>
-      <div style="font-size:.75rem;font-weight:500;color:#6b7a92;margin-top:.25rem;">Customers</div>
-    </div>
-    <div style="text-align:center;padding:1rem .75rem;background:#f9fafb;border:1px solid #e4e8ef;border-radius:.75rem;">
-      <div style="font-size:1.5rem;font-weight:800;color:#1e2534;">{{ total_jobs }}</div>
-      <div style="font-size:.75rem;font-weight:500;color:#6b7a92;margin-top:.25rem;">Total Jobs</div>
-    </div>
-    <div style="text-align:center;padding:1rem .75rem;background:#f9fafb;border:1px solid #e4e8ef;border-radius:.75rem;">
-      <div style="font-size:1.5rem;font-weight:800;color:#1e2534;">{{ total_payments }}</div>
-      <div style="font-size:.75rem;font-weight:500;color:#6b7a92;margin-top:.25rem;">Payments</div>
-    </div>
-    <div style="text-align:center;padding:1rem .75rem;background:#edfbf4;border:1px solid #a7f3cf;border-radius:.75rem;">
-      <div style="font-size:1.5rem;font-weight:800;color:#0d7a4a;">${{ total_collected|floatformat:0 }}</div>
-      <div style="font-size:.75rem;font-weight:500;color:#6b7a92;margin-top:.25rem;">Collected</div>
-    </div>
-    <div style="text-align:center;padding:1rem .75rem;background:#fffaeb;border:1px solid #fde68a;border-radius:.75rem;">
-      <div style="font-size:1.5rem;font-weight:800;color:#9a5700;">${{ outstanding_balance|floatformat:0 }}</div>
-      <div style="font-size:.75rem;font-weight:500;color:#6b7a92;margin-top:.25rem;">Outstanding</div>
-    </div>
-    <div style="text-align:center;padding:1rem .75rem;background:#e9f5fd;border:1px solid #bae6fd;border-radius:.75rem;">
-      <div style="font-size:1.5rem;font-weight:800;color:#055e96;">{{ collection_rate|floatformat:0 }}%</div>
-      <div style="font-size:.75rem;font-weight:500;color:#6b7a92;margin-top:.25rem;">Collection Rate</div>
-    </div>
-    {% endfor %}
-  </div>
-
-  <div style="margin-top:1rem;padding:.875rem 1rem;background:#f0effe;border:1px solid #c9c5fc;border-radius:.625rem;">
-    <p style="font-size:.875rem;color:#3d35c4;margin:0;"><strong>Tip:</strong> Use PDF reports for client presentations. Use CSV exports for data analysis in Excel or Google Sheets.</p>
-  </div>
-</div>
-
+{% block javascript %}
+{{ block.super }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click tracking for export buttons
+    document.querySelectorAll('a[href*="pdf"], a[href*="csv"]').forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Add ripple effect
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                background: rgba(255,255,255,0.3);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+            `;
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+            
+            // Show loading state
+            const originalText = this.innerHTML;
+            this.innerHTML = this.innerHTML.replace(/PDF|CSV/, 'Loading...');
+            
+            setTimeout(() => {
+                this.innerHTML = originalText;
+            }, 1000);
+        });
+    });
+});
+</script>
 {% endblock %}
