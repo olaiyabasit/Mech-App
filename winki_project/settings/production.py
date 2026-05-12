@@ -3,7 +3,7 @@ import os
 
 # Security Settings for Production
 DEBUG = False
-ALLOWED_HOSTS = ['.vercel.app', '.vercel.com']
+ALLOWED_HOSTS = ['.vercel.app', '.vercel.com', '.railway.app', '.up.railway.app']
 
 # Security Headers
 SECURE_BROWSER_XSS_FILTER = True
@@ -11,7 +11,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False  # Railway handles SSL at the proxy level
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 X_FRAME_OPTIONS = 'DENY'
