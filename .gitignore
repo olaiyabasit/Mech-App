@@ -53,7 +53,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Tailwind build
-theme/static/
+# theme/static/ is committed so Railway has the compiled CSS
 
 # Coverage reports
 htmlcov/
