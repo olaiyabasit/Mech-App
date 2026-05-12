@@ -1,437 +1,372 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard - WInki Professional{% endblock %}
-
-{% block main_classes %}py-8{% endblock %}
+{% block title %}Dashboard — WInki{% endblock %}
+{% block page_name %}Dashboard{% endblock %}
+{% block main_classes %}{% endblock %}
 
 {% block content %}
-<!-- Dashboard Header with Enhanced Design -->
-<section class="relative py-20 bg-gradient-to-br from-off-white via-light-gray to-off-white overflow-hidden">
-    <!-- Background Pattern -->
-    <div class="absolute inset-0 opacity-[0.02]">
-        <svg class="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <pattern id="dashboard-grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                    <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" stroke-width="1"/>
-                </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#dashboard-grid)"/>
+
+<!-- ── Page Header ── -->
+<div class="flex items-center justify-between mb-7">
+  <div>
+    <h1 class="page-title">Business Dashboard</h1>
+    <p class="page-subtitle">Real-time overview of your refurbishment operations</p>
+  </div>
+  <div class="hidden sm:flex items-center gap-2 text-sm text-[#64748b] bg-white border border-[#e2e8f0] px-4 py-2 rounded-xl shadow-xs">
+    <svg class="w-4 h-4 text-[#94a3b8]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    <span id="liveClock">{{ current_time|date:"M d, Y · H:i" }}</span>
+  </div>
+</div>
+
+<!-- ── KPI Stats Row ── -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
+
+  <!-- Total Jobs -->
+  <div class="stat-card accent animate-fade-in-up" style="animation-delay:.05s">
+    <div class="flex items-start justify-between">
+      <div>
+        <p class="stat-label">Total Jobs</p>
+        <p class="stat-value mt-1">{{ job_stats.total }}</p>
+      </div>
+      <div class="stat-icon accent">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
         </svg>
+      </div>
+    </div>
+    <p class="stat-hint">{{ job_stats.this_month }} this month</p>
+  </div>
+
+  <!-- Total Revenue -->
+  <div class="stat-card success animate-fade-in-up" style="animation-delay:.1s">
+    <div class="flex items-start justify-between">
+      <div>
+        <p class="stat-label">Total Revenue</p>
+        <p class="stat-value mt-1">${{ total_revenue|floatformat:0 }}</p>
+      </div>
+      <div class="stat-icon success">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+    </div>
+    <p class="stat-hint">${{ monthly_revenue|floatformat:0 }} this month</p>
+  </div>
+
+  <!-- Outstanding -->
+  <div class="stat-card warning animate-fade-in-up" style="animation-delay:.15s">
+    <div class="flex items-start justify-between">
+      <div>
+        <p class="stat-label">Outstanding</p>
+        <p class="stat-value mt-1">${{ outstanding_balance|floatformat:0 }}</p>
+      </div>
+      <div class="stat-icon warning">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+    </div>
+    <p class="stat-hint">Pending collections</p>
+  </div>
+
+  <!-- Customers -->
+  <div class="stat-card info animate-fade-in-up" style="animation-delay:.2s">
+    <div class="flex items-start justify-between">
+      <div>
+        <p class="stat-label">Customers</p>
+        <p class="stat-value mt-1">{{ total_customers }}</p>
+      </div>
+      <div class="stat-icon info">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </div>
+    </div>
+    <p class="stat-hint">Registered clients</p>
+  </div>
+
+</div>
+
+<!-- ── Main Grid ── -->
+<div class="grid lg:grid-cols-3 gap-5">
+
+  <!-- LEFT — 2/3 -->
+  <div class="lg:col-span-2 flex flex-col gap-5">
+
+    <!-- Job Status Pipeline -->
+    <div class="card animate-fade-in-up" style="animation-delay:.25s">
+      <div class="card-header">
+        <h2 class="section-title">Job Pipeline</h2>
+        <a href="/admin/jobs/job/" class="btn-cinematic-ghost text-sm py-2">View All ›</a>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+
+        <div class="bg-[#fef3c7] border border-[#fde68a] rounded-xl p-4 text-center">
+          <div class="text-2xl font-bold text-[#b45309]">{{ job_stats.pending }}</div>
+          <div class="text-xs font-600 text-[#92400e] uppercase tracking-wider mt-1">Pending</div>
+          <div class="status-badge status-pending mt-2">Waiting</div>
+        </div>
+
+        <div class="bg-[#e0f2fe] border border-[#bae6fd] rounded-xl p-4 text-center">
+          <div class="text-2xl font-bold text-[#0369a1]">{{ job_stats.in_progress }}</div>
+          <div class="text-xs font-600 text-[#075985] uppercase tracking-wider mt-1">In Progress</div>
+          <div class="status-badge status-progress mt-2">Active</div>
+        </div>
+
+        <div class="bg-[#dcfce7] border border-[#bbf7d0] rounded-xl p-4 text-center">
+          <div class="text-2xl font-bold text-[#15803d]">{{ job_stats.completed }}</div>
+          <div class="text-xs font-600 text-[#14532d] uppercase tracking-wider mt-1">Completed</div>
+          <div class="status-badge status-completed mt-2">Done</div>
+        </div>
+
+        <div class="bg-[#eef2ff] border border-[#c7d2fe] rounded-xl p-4 text-center">
+          <div class="text-2xl font-bold text-[#4338ca]">{{ job_stats.delivered }}</div>
+          <div class="text-xs font-600 text-[#3730a3] uppercase tracking-wider mt-1">Delivered</div>
+          <div class="status-badge status-delivered mt-2">Closed</div>
+        </div>
+
+      </div>
     </div>
 
-    <!-- Floating Elements -->
-    <div class="absolute top-10 left-1/4 w-32 h-32 bg-gradient-to-br from-graphite/5 to-charcoal/5 rounded-full blur-xl animate-float-slow"></div>
-    <div class="absolute bottom-10 right-1/4 w-24 h-24 bg-gradient-to-br from-slate/5 to-pewter/5 rounded-full blur-lg animate-float-delayed"></div>
-    
-    <div class="container-cinematic relative z-10">
-        <div class="flex-between flex-wrap gap-6 mb-8">
-            <div class="animate-slide-in">
-                <div class="flex items-center space-x-4 mb-4">
-                    <div class="w-3 h-16 bg-gradient-to-b from-pure-black to-charcoal rounded-full"></div>
-                    <div>
-                        <h1 class="text-6xl xl:text-7xl font-black text-transparent bg-gradient-to-r from-pure-black via-graphite to-charcoal bg-clip-text leading-tight">
-                            Business Dashboard
-                        </h1>
-                        <div class="h-1 w-32 bg-gradient-to-r from-pure-black via-charcoal to-transparent rounded-full mt-2"></div>
-                    </div>
-                </div>
-                <p class="text-xl text-pewter mt-4 font-medium">
-                    Real-time overview of your refurbishment operations
-                </p>
-            </div>
-            <div class="flex items-center space-x-6 animate-fade-in-up" style="animation-delay: 0.2s;">
-                <div class="glass-card px-6 py-3">
-                    <div class="text-sm text-slate mb-1">Last Updated</div>
-                    <div class="text-lg font-semibold text-pure-black">
-                        {{ current_time|date:"M d, Y - H:i" }}
-                    </div>
-                </div>
-                <a href="/admin/jobs/job/add/" class="btn-cinematic-primary enhanced-shadow group">
-                    <span class="flex items-center space-x-2">
-                        <span>✨</span>
-                        <span>New Job</span>
-                    </span>
+    <!-- Recent Projects Table -->
+    {% if recent_jobs %}
+    <div class="card animate-fade-in-up" style="animation-delay:.3s">
+      <div class="card-header">
+        <h2 class="section-title">Recent Projects</h2>
+        <div class="flex gap-2">
+          <a href="/admin/jobs/job/add/" class="btn-cinematic-secondary text-sm py-2">+ Add Job</a>
+          <a href="/admin/jobs/job/" class="btn-cinematic-ghost text-sm py-2">All Jobs ›</a>
+        </div>
+      </div>
+
+      <div class="scrollable-x">
+        <table class="table-cinematic">
+          <thead>
+            <tr>
+              <th>Job ID</th>
+              <th>Customer</th>
+              <th>Service</th>
+              <th>Status</th>
+              <th class="text-right">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for job in recent_jobs %}
+            <tr>
+              <td>
+                <a href="/admin/jobs/job/{{ job.job_id }}/change/"
+                   class="font-semibold text-[#4f46e5] hover:text-[#4338ca] transition-colors">
+                  {{ job.job_id }}
                 </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Enhanced Key Metrics -->
-<section class="py-16 relative overflow-hidden">
-    <!-- Background Elements -->
-    <div class="absolute inset-0 bg-gradient-to-b from-off-white via-light-gray to-off-white"></div>
-    <div class="absolute top-1/2 left-0 w-96 h-96 bg-gradient-radial from-pure-black/3 via-transparent to-transparent rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
-    <div class="absolute bottom-0 right-0 w-72 h-72 bg-gradient-radial from-charcoal/2 via-transparent to-transparent rounded-full blur-2xl transform translate-x-1/2 translate-y-1/2"></div>
-    
-    <div class="container-cinematic relative z-10">
-        <div class="grid-cinematic grid-auto-fit mb-16">
-            <!-- Enhanced Total Jobs Card -->
-            <div class="card-stats-enhanced animate-fade-in-up group hover:scale-105 transition-all duration-500" style="animation-delay: 0.1s;">
-                <div class="flex-between items-start mb-8">
-                    <div class="flex-1">
-                        <h3 class="text-sm font-semibold text-pewter mb-3 uppercase tracking-wider">Total Jobs</h3>
-                        <div class="text-5xl xl:text-6xl font-black text-transparent bg-gradient-to-r from-pure-black to-charcoal bg-clip-text mb-2">
-                            {{ job_stats.total }}
-                        </div>
-                        <div class="text-sm text-slate font-medium">All time records</div>
-                    </div>
-                    <div class="w-20 h-20 bg-gradient-to-br from-graphite/10 to-charcoal/5 border-2 border-medium-gray/20 rounded-2xl flex-center group-hover:scale-110 transition-transform duration-300">
-                        <span class="text-3xl">📊</span>
-                    </div>
-                </div>
-                <div class="relative bg-light-gray h-3 rounded-full overflow-hidden border border-medium-gray/20">
-                    <div class="bg-gradient-to-r from-pure-black via-graphite to-charcoal h-full w-full rounded-full shadow-inner group-hover:shadow-lg transition-shadow duration-300"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                </div>
-                <div class="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent rounded-2xl pointer-events-none"></div>
-            </div>
-
-            <!-- Enhanced Jobs Today Card -->
-            <div class="card-stats-enhanced animate-fade-in-up group hover:scale-105 transition-all duration-500" style="animation-delay: 0.2s;">
-                <div class="flex-between items-start mb-8">
-                    <div class="flex-1">
-                        <h3 class="text-sm font-semibold text-pewter mb-3 uppercase tracking-wider">Today's Activity</h3>
-                        <div class="text-5xl xl:text-6xl font-black text-transparent bg-gradient-to-r from-charcoal to-slate bg-clip-text mb-2">
-                            {{ job_stats.today }}
-                        </div>
-                        <div class="text-sm text-slate font-medium">New jobs created</div>
-                    </div>
-                    <div class="w-20 h-20 bg-gradient-to-br from-charcoal/10 to-slate/5 border-2 border-medium-gray/20 rounded-2xl flex-center group-hover:scale-110 transition-transform duration-300">
-                        <span class="text-3xl">🚀</span>
-                    </div>
-                </div>
-                <div class="relative bg-light-gray h-3 rounded-full overflow-hidden border border-medium-gray/20">
-                    <div class="bg-gradient-to-r from-charcoal via-graphite to-slate h-full rounded-full shadow-inner group-hover:shadow-lg transition-shadow duration-300" 
-                         style="width: {% widthratio job_stats.today job_stats.total 100 %}%"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                </div>
-                <div class="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent rounded-2xl pointer-events-none"></div>
-            </div>
-
-            <!-- Enhanced Revenue Card -->
-            <div class="card-stats-enhanced animate-fade-in-up group hover:scale-105 transition-all duration-500" style="animation-delay: 0.3s;">
-                <div class="flex-between items-start mb-8">
-                    <div class="flex-1">
-                        <h3 class="text-sm font-semibold text-pewter mb-3 uppercase tracking-wider">Total Revenue</h3>
-                        <div class="text-5xl xl:text-6xl font-black text-transparent bg-gradient-to-r from-slate to-pewter bg-clip-text mb-2">
-                            ${{ total_revenue|floatformat:0 }}
-                        </div>
-                        <div class="text-sm text-slate font-medium">Completed projects</div>
-                    </div>
-                    <div class="w-20 h-20 bg-gradient-to-br from-slate/10 to-pewter/5 border-2 border-medium-gray/20 rounded-2xl flex-center group-hover:scale-110 transition-transform duration-300">
-                        <span class="text-3xl">💎</span>
-                    </div>
-                </div>
-                <div class="relative bg-light-gray h-3 rounded-full overflow-hidden border border-medium-gray/20">
-                    <div class="bg-gradient-to-r from-slate via-pewter to-charcoal h-full w-4/5 rounded-full shadow-inner group-hover:shadow-lg transition-shadow duration-300"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                </div>
-                <div class="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent rounded-2xl pointer-events-none"></div>
-            </div>
-
-            <!-- Enhanced Outstanding Card -->
-            <div class="card-stats-enhanced animate-fade-in-up group hover:scale-105 transition-all duration-500" style="animation-delay: 0.4s;">
-                <div class="flex-between items-start mb-8">
-                    <div class="flex-1">
-                        <h3 class="text-sm font-semibold text-pewter mb-3 uppercase tracking-wider">Outstanding</h3>
-                        <div class="text-5xl xl:text-6xl font-black text-transparent bg-gradient-to-r from-pewter to-graphite bg-clip-text mb-2">
-                            ${{ outstanding_balance|floatformat:0 }}
-                        </div>
-                        <div class="text-sm text-slate font-medium">Pending payments</div>
-                    </div>
-                    <div class="w-20 h-20 bg-gradient-to-br from-pewter/10 to-graphite/5 border-2 border-medium-gray/20 rounded-2xl flex-center group-hover:scale-110 transition-transform duration-300">
-                        <span class="text-3xl">⏳</span>
-                    </div>
-                </div>
-                <div class="relative bg-light-gray h-3 rounded-full overflow-hidden border border-medium-gray/20">
-                    <div class="bg-gradient-to-r from-pewter via-slate to-charcoal h-full w-3/5 rounded-full shadow-inner group-hover:shadow-lg transition-shadow duration-300"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                </div>
-                <div class="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent rounded-2xl pointer-events-none"></div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Main Dashboard Content -->
-<section class="pb-12">
-    <div class="container-cinematic">
-        <div class="grid lg:grid-cols-3 gap-8">
-            
-            <!-- Job Status Overview -->
-            <div class="lg:col-span-2">
-                <div class="card-cinematic mb-8 animate-fade-in-up" style="animation-delay: 0.5s;">
-                    <div class="flex-between items-center mb-8">
-                        <h2 class="text-cinematic-subtitle font-semibold">Job Status Overview</h2>
-                        <a href="/admin/jobs/job/" class="btn-cinematic-ghost">View All</a>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="text-center p-6 bg-light-gray border border-medium-gray rounded-lg">
-                            <div class="status-badge status-pending mb-3">Pending</div>
-                            <div class="text-3xl font-bold text-pure-black">{{ job_stats.pending }}</div>
-                            <div class="text-cinematic-caption text-pewter mt-2">Jobs waiting</div>
-                        </div>
-                        
-                        <div class="text-center p-6 bg-light-gray border border-medium-gray rounded-lg">
-                            <div class="status-badge status-progress mb-3">Active</div>
-                            <div class="text-3xl font-bold text-pure-black">{{ job_stats.in_progress }}</div>
-                            <div class="text-cinematic-caption text-pewter mt-2">In progress</div>
-                        </div>
-                        
-                        <div class="text-center p-6 bg-light-gray border border-medium-gray rounded-lg">
-                            <div class="status-badge status-completed mb-3">Complete</div>
-                            <div class="text-3xl font-bold text-pure-black">{{ job_stats.completed }}</div>
-                            <div class="text-cinematic-caption text-pewter mt-2">Finished work</div>
-                        </div>
-                        
-                        <div class="text-center p-6 bg-light-gray border border-medium-gray rounded-lg">
-                            <div class="status-badge status-delivered mb-3">Delivered</div>
-                            <div class="text-3xl font-bold text-pure-black">{{ job_stats.delivered }}</div>
-                            <div class="text-cinematic-caption text-pewter mt-2">Customer ready</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Jobs Table -->
-                {% if recent_jobs %}
-                <div class="card-cinematic animate-fade-in-up" style="animation-delay: 0.7s;">
-                    <div class="flex-between items-center mb-8">
-                        <h2 class="text-cinematic-subtitle font-semibold">Recent Projects</h2>
-                        <div class="flex space-x-2">
-                            <a href="/admin/jobs/job/add/" class="btn-cinematic-secondary">Add Job</a>
-                            <a href="/admin/jobs/job/" class="btn-cinematic-ghost">View All</a>
-                        </div>
-                    </div>
-                    
-                    <div class="overflow-hidden">
-                        <table class="table-cinematic">
-                            <thead>
-                                <tr>
-                                    <th>Project ID</th>
-                                    <th>Customer</th>
-                                    <th>Service Type</th>
-                                    <th>Status</th>
-                                    <th class="text-right">Value</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for job in recent_jobs %}
-                                <tr>
-                                    <td>
-                                        <a href="/admin/jobs/job/{{ job.job_id }}/change/" 
-                                           class="font-semibold text-pure-black hover:text-slate transition-colors">
-                                            {{ job.job_id }}
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <div class="font-medium">{{ job.customer.name }}</div>
-                                        <div class="text-cinematic-caption text-pewter">
-                                            {{ job.customer.phone|default:"No phone" }}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="text-cinematic-caption">{{ job.get_job_type_display }}</span>
-                                    </td>
-                                    <td>
-                                        {% if job.status == 'pending' %}
-                                            <span class="status-badge status-pending">{{ job.get_status_display }}</span>
-                                        {% elif job.status == 'in_progress' %}
-                                            <span class="status-badge status-progress">{{ job.get_status_display }}</span>
-                                        {% elif job.status == 'completed' %}
-                                            <span class="status-badge status-completed">{{ job.get_status_display }}</span>
-                                        {% elif job.status == 'delivered' %}
-                                            <span class="status-badge status-delivered">{{ job.get_status_display }}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="text-right">
-                                        <div class="font-bold text-lg">${{ job.total_cost }}</div>
-                                        {% if job.outstanding_balance > 0 %}
-                                            <div class="text-cinematic-caption text-pewter">
-                                                ${{ job.outstanding_balance }} due
-                                            </div>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+              </td>
+              <td>
+                <div class="font-medium text-[#0f172a]">{{ job.customer.name }}</div>
+                <div class="text-xs text-[#94a3b8] mt-0.5">{{ job.customer.phone|default:"—" }}</div>
+              </td>
+              <td>
+                <span class="text-sm text-[#475569]">{{ job.get_job_type_display }}</span>
+              </td>
+              <td>
+                {% if job.status == 'pending' %}
+                  <span class="status-badge status-pending">{{ job.get_status_display }}</span>
+                {% elif job.status == 'in_progress' %}
+                  <span class="status-badge status-progress">{{ job.get_status_display }}</span>
+                {% elif job.status == 'completed' %}
+                  <span class="status-badge status-completed">{{ job.get_status_display }}</span>
+                {% elif job.status == 'delivered' %}
+                  <span class="status-badge status-delivered">{{ job.get_status_display }}</span>
                 {% endif %}
-            </div>
-
-            <!-- Sidebar - Quick Actions & Insights -->
-            <div class="space-y-8">
-                
-                <!-- Quick Actions Panel -->
-                <div class="card-cinematic animate-fade-in-up" style="animation-delay: 0.6s;">
-                    <h3 class="text-cinematic-subtitle font-semibold mb-6">Quick Actions</h3>
-                    
-                    <div class="space-y-4">
-                        <a href="/admin/jobs/job/add/" class="btn-cinematic-primary w-full flex items-center justify-center space-x-2">
-                            <span>➕</span>
-                            <span>Create New Job</span>
-                        </a>
-                        
-                        <a href="/admin/customers/customer/add/" class="btn-cinematic-secondary w-full flex items-center justify-center space-x-2">
-                            <span>👤</span>
-                            <span>Add Customer</span>
-                        </a>
-                        
-                        <div class="grid grid-cols-2 gap-3">
-                            <a href="/admin/jobs/job/" class="btn-cinematic-ghost text-center py-3">
-                                <div class="text-lg mb-1">📋</div>
-                                <div class="text-xs">Jobs</div>
-                            </a>
-                            <a href="/admin/customers/customer/" class="btn-cinematic-ghost text-center py-3">
-                                <div class="text-lg mb-1">👥</div>
-                                <div class="text-xs">Customers</div>
-                            </a>
-                            <a href="/admin/payments/payment/" class="btn-cinematic-ghost text-center py-3">
-                                <div class="text-lg mb-1">💰</div>
-                                <div class="text-xs">Payments</div>
-                            </a>
-                            <a href="/admin/" class="btn-cinematic-ghost text-center py-3">
-                                <div class="text-lg mb-1">⚙️</div>
-                                <div class="text-xs">Admin</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Business Insights -->
-                <div class="card-cinematic animate-fade-in-up" style="animation-delay: 0.8s;">
-                    <h3 class="text-cinematic-subtitle font-semibold mb-6">Business Insights</h3>
-                    
-                    <div class="space-y-6">
-                        <div class="bg-light-gray p-4 border border-medium-gray rounded-lg">
-                            <div class="flex-between items-center mb-2">
-                                <span class="text-cinematic-caption text-pewter">Average Job Value</span>
-                                <span class="text-xl font-bold">${{ average_job_value|floatformat:0 }}</span>
-                            </div>
-                            <div class="text-cinematic-caption text-slate">
-                                Based on completed projects
-                            </div>
-                        </div>
-                        
-                        <div class="bg-light-gray p-4 border border-medium-gray rounded-lg">
-                            <div class="flex-between items-center mb-2">
-                                <span class="text-cinematic-caption text-pewter">Collection Rate</span>
-                                <span class="text-xl font-bold">{% widthratio total_revenue total_revenue|add:outstanding_balance 100 %}%</span>
-                            </div>
-                            <div class="text-cinematic-caption text-slate">
-                                Revenue vs outstanding
-                            </div>
-                        </div>
-                        
-                        <div class="bg-light-gray p-4 border border-medium-gray rounded-lg">
-                            <div class="flex-between items-center mb-2">
-                                <span class="text-cinematic-caption text-pewter">Active Projects</span>
-                                <span class="text-xl font-bold">{{ job_stats.in_progress }}</span>
-                            </div>
-                            <div class="text-cinematic-caption text-slate">
-                                Currently in progress
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+              </td>
+              <td class="text-right">
+                <div class="font-semibold text-[#0f172a]">${{ job.total_cost }}</div>
+                {% if job.outstanding_balance > 0 %}
+                  <div class="text-xs text-[#b45309] mt-0.5">${{ job.outstanding_balance }} due</div>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
-</section>
+    {% endif %}
+
+    <!-- Recent Payments -->
+    {% if recent_payments %}
+    <div class="card animate-fade-in-up" style="animation-delay:.35s">
+      <div class="card-header">
+        <h2 class="section-title">Recent Payments</h2>
+        <a href="/admin/payments/payment/" class="btn-cinematic-ghost text-sm py-2">All Payments ›</a>
+      </div>
+      <div class="scrollable-x">
+        <table class="table-cinematic">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Job</th>
+              <th>Customer</th>
+              <th>Method</th>
+              <th class="text-right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for payment in recent_payments %}
+            <tr>
+              <td class="text-sm text-[#64748b]">{{ payment.payment_date|date:"M d, Y" }}</td>
+              <td>
+                <a href="/admin/jobs/job/{{ payment.job.job_id }}/change/"
+                   class="font-medium text-[#4f46e5] hover:text-[#4338ca] text-sm">
+                  {{ payment.job.job_id }}
+                </a>
+              </td>
+              <td class="text-sm text-[#334155]">{{ payment.job.customer.name }}</td>
+              <td>
+                <span class="bg-[#f1f5f9] text-[#475569] text-xs font-500 px-2.5 py-1 rounded-lg">
+                  {{ payment.get_payment_method_display }}
+                </span>
+              </td>
+              <td class="text-right font-semibold text-[#15803d]">${{ payment.amount }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+  <!-- /LEFT -->
+
+  <!-- RIGHT — 1/3 -->
+  <div class="flex flex-col gap-5">
+
+    <!-- Quick Actions -->
+    <div class="card animate-fade-in-up" style="animation-delay:.28s">
+      <h3 class="section-title mb-4">Quick Actions</h3>
+
+      <div class="flex flex-col gap-2">
+        <a href="/admin/jobs/job/add/"
+           class="flex items-center gap-3 p-3 rounded-xl bg-[#eef2ff] hover:bg-[#e0e7ff] text-[#4338ca] font-medium text-sm transition-colors group">
+          <div class="w-8 h-8 bg-[#6366f1] rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+          </div>
+          Create New Job
+          <svg class="w-4 h-4 ml-auto opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+
+        <a href="/admin/customers/customer/add/"
+           class="flex items-center gap-3 p-3 rounded-xl bg-[#f0fdf4] hover:bg-[#dcfce7] text-[#15803d] font-medium text-sm transition-colors group">
+          <div class="w-8 h-8 bg-[#16a34a] rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+            </svg>
+          </div>
+          Add New Customer
+          <svg class="w-4 h-4 ml-auto opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+
+        <a href="/admin/payments/payment/add/"
+           class="flex items-center gap-3 p-3 rounded-xl bg-[#fffbeb] hover:bg-[#fef3c7] text-[#b45309] font-medium text-sm transition-colors group">
+          <div class="w-8 h-8 bg-[#d97706] rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          Record Payment
+          <svg class="w-4 h-4 ml-auto opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+
+        <a href="{% url 'reports:dashboard' %}"
+           class="flex items-center gap-3 p-3 rounded-xl bg-[#f0f9ff] hover:bg-[#e0f2fe] text-[#0369a1] font-medium text-sm transition-colors group">
+          <div class="w-8 h-8 bg-[#0284c7] rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          View Reports
+          <svg class="w-4 h-4 ml-auto opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- Business Insights -->
+    <div class="card animate-fade-in-up" style="animation-delay:.33s">
+      <h3 class="section-title mb-4">Business Insights</h3>
+
+      <div class="flex flex-col gap-3">
+
+        <div class="flex items-center justify-between p-3 bg-[#f8fafc] rounded-xl border border-[#e2e8f0]">
+          <div>
+            <div class="text-xs font-500 text-[#64748b] uppercase tracking-wider">Avg Job Value</div>
+            <div class="text-xs text-[#94a3b8] mt-0.5">Completed projects</div>
+          </div>
+          <div class="text-lg font-bold text-[#0f172a]">${{ average_job_value|default:"0"|floatformat:0 }}</div>
+        </div>
+
+        <div class="flex items-center justify-between p-3 bg-[#f8fafc] rounded-xl border border-[#e2e8f0]">
+          <div>
+            <div class="text-xs font-500 text-[#64748b] uppercase tracking-wider">Collection Rate</div>
+            <div class="text-xs text-[#94a3b8] mt-0.5">Revenue collected</div>
+          </div>
+          <div class="text-lg font-bold text-[#15803d]">
+            {% if total_revenue and total_revenue > 0 %}
+              {% widthratio total_revenue total_revenue|add:outstanding_balance 100 %}%
+            {% else %}—{% endif %}
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between p-3 bg-[#f8fafc] rounded-xl border border-[#e2e8f0]">
+          <div>
+            <div class="text-xs font-500 text-[#64748b] uppercase tracking-wider">Today's Jobs</div>
+            <div class="text-xs text-[#94a3b8] mt-0.5">Created today</div>
+          </div>
+          <div class="text-lg font-bold text-[#0f172a]">{{ job_stats.today }}</div>
+        </div>
+
+        <div class="flex items-center justify-between p-3 bg-[#f8fafc] rounded-xl border border-[#e2e8f0]">
+          <div>
+            <div class="text-xs font-500 text-[#64748b] uppercase tracking-wider">Active Jobs</div>
+            <div class="text-xs text-[#94a3b8] mt-0.5">In progress now</div>
+          </div>
+          <div class="text-lg font-bold text-[#0369a1]">{{ job_stats.in_progress }}</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  <!-- /RIGHT -->
+
+</div>
 {% endblock %}
 
 {% block javascript %}
 {{ block.super }}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Add real-time clock
-    function updateClock() {
-        const now = new Date();
-        const options = { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric', 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        };
-        const timeStr = now.toLocaleDateString('en-US', options);
-        const clockEl = document.querySelector('[data-clock]');
-        if (clockEl) {
-            clockEl.textContent = `Last updated: ${timeStr}`;
-        }
-    }
-    
-    // Update clock every minute
-    setInterval(updateClock, 60000);
-    
-    // Add hover effects to stats cards
-    document.querySelectorAll('.card-stats').forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            const progressBar = this.querySelector('[class*="bg-"][class*="h-full"]');
-            if (progressBar) {
-                progressBar.style.transform = 'scaleX(1.05)';
-                progressBar.style.transition = 'transform 0.3s ease';
-            }
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            const progressBar = this.querySelector('[class*="bg-"][class*="h-full"]');
-            if (progressBar) {
-                progressBar.style.transform = 'scaleX(1)';
-            }
-        });
-    });
-    
-    // Add click animation to buttons
-    document.querySelectorAll('[class*="btn-cinematic"]').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            const ripple = document.createElement('span');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-            
-            ripple.style.cssText = `
-                position: absolute;
-                width: ${size}px;
-                height: ${size}px;
-                left: ${x}px;
-                top: ${y}px;
-                background: rgba(0,0,0,0.1);
-                border-radius: 50%;
-                transform: scale(0);
-                animation: ripple 0.6s linear;
-                pointer-events: none;
-            `;
-            
-            this.appendChild(ripple);
-            
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
-        });
-    });
-    
-    // Add CSS animation for ripple effect
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-        
-        [class*="btn-cinematic"] {
-            position: relative;
-            overflow: hidden;
-        }
-    `;
-    document.head.appendChild(style);
-});
+(function () {
+  var clock = document.getElementById('liveClock');
+  if (!clock) return;
+  function tick() {
+    var now = new Date();
+    var opts = { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+    clock.textContent = now.toLocaleDateString('en-GB', opts).replace(',', ' ·');
+  }
+  tick();
+  setInterval(tick, 60000);
+})();
 </script>
 {% endblock %}
