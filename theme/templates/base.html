@@ -1,0 +1,391 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <title>{% block title %}WInki - Vehicle & Alloy Wheel Refurbishment Bookkeeping{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Professional vehicle and alloy wheel refurbishment business management system">
+    {% tailwind_css %}
+</head>
+
+<body class="h-full bg-off-white text-pure-black font-primary antialiased">
+    <div class="min-h-full flex flex-col">
+        <!-- Navigation Header -->
+        <header class="nav-cinematic sticky top-0 z-50 backdrop-blur-xl bg-pure-white/95 border-b border-medium-gray">
+            <div class="container-cinematic">
+                <nav class="flex-between py-6">
+                    <!-- Brand Logo -->
+                    <div class="flex items-center space-x-4">
+                        <a href="/" class="flex items-center space-x-3 group">
+                            <div class="relative">
+                                <div class="w-12 h-12 bg-pure-black flex-center transform group-hover:rotate-45 transition-all duration-500 relative overflow-hidden">
+                                    <span class="text-pure-white font-bold text-xl transform group-hover:-rotate-45 transition-transform duration-500">W</span>
+                                    <div class="absolute inset-0 bg-gradient-to-br from-transparent via-pure-white/10 to-pure-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                </div>
+                                <div class="absolute -inset-1 bg-gradient-to-r from-pure-black via-slate to-pure-black rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm"></div>
+                            </div>
+                            <div>
+                                <h1 class="text-2xl font-bold bg-gradient-to-r from-pure-black via-slate to-pure-black bg-clip-text text-transparent">WInki</h1>
+                                <p class="text-xs text-pewter -mt-1 tracking-wide">PROFESSIONAL REFURBISHMENT</p>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- Main Navigation -->
+                    {% if user.is_authenticated %}
+                    <nav class="hidden md:flex items-center space-x-8">
+                        <a href="{% url 'core:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="/admin/jobs/job/" class="nav-link">
+                            <span>Jobs</span>
+                        </a>
+                        <a href="/admin/customers/customer/" class="nav-link">
+                            <span>Customers</span>
+                        </a>
+                        <a href="/admin/payments/payment/" class="nav-link">
+                            <span>Payments</span>
+                        </a>
+                        <a href="{% url 'reports:dashboard' %}" class="nav-link">
+                            <span>Reports</span>
+                        </a>
+                    </nav>
+                    {% endif %}
+                    
+                    <!-- User Menu -->
+                    <div class="flex items-center space-x-4">
+                        {% if user.is_authenticated %}
+                            <div class="hidden sm:flex items-center space-x-3 px-4 py-2 bg-light-gray/50 border border-medium-gray/30 rounded-xl backdrop-blur-sm">
+                                <div class="w-8 h-8 bg-gradient-to-br from-pure-black to-slate rounded-full flex-center relative">
+                                    <span class="text-pure-white text-sm font-semibold">
+                                        {{ user.first_name|first|default:user.username|first|upper }}
+                                    </span>
+                                </div>
+                                <span class="text-sm font-medium text-slate">{{ user.first_name|default:user.username }}</span>
+                            </div>
+                            <a href="/admin/" class="btn-cinematic-ghost">Admin</a>
+                            <a href="{% url 'admin:logout' %}" class="btn-cinematic-secondary">Logout</a>
+                        {% else %}
+                            <a href="{% url 'admin:login' %}" class="btn-cinematic-primary">Login</a>
+                        {% endif %}
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 {% block main_classes %}{% endblock %}">
+            {% block content %}
+            <!-- Hero Section -->
+            <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+                <!-- Animated Background Pattern -->
+                <div class="absolute inset-0 opacity-5">
+                    <div class="absolute inset-0 bg-gradient-to-br from-pure-black/5 via-transparent to-slate/5"></div>
+                    <div class="absolute top-0 left-0 w-full h-full">
+                        <!-- Geometric Pattern -->
+                        <svg class="absolute top-10 left-10 w-32 h-32 text-pure-black/10 animate-pulse" fill="currentColor" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="2"/>
+                            <circle cx="20" cy="20" r="1"/>
+                            <circle cx="80" cy="20" r="1"/>
+                            <circle cx="20" cy="80" r="1"/>
+                            <circle cx="80" cy="80" r="1"/>
+                            <path d="M50,50 L20,20 M50,50 L80,20 M50,50 L20,80 M50,50 L80,80" stroke="currentColor" stroke-width="0.5" fill="none"/>
+                        </svg>
+                        
+                        <svg class="absolute top-32 right-20 w-24 h-24 text-slate/20 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0h3m0 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        
+                        <svg class="absolute bottom-20 left-32 w-20 h-20 text-pewter/30 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        
+                        <!-- Grid Lines -->
+                        <div class="absolute inset-0" style="background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 50px 50px;"></div>
+                    </div>
+                </div>
+                
+                <!-- Floating Elements -->
+                <div class="absolute top-20 right-10 w-64 h-64 bg-gradient-to-br from-pure-white to-light-gray rounded-full opacity-30 blur-3xl animate-pulse"></div>
+                <div class="absolute bottom-20 left-10 w-48 h-48 bg-gradient-to-tr from-slate/20 to-transparent rounded-full opacity-50 blur-2xl"></div>
+                
+                <div class="container-cinematic relative z-10">
+                    <div class="text-center max-w-6xl mx-auto">
+                        
+                        <!-- Logo Animation -->
+                        <div class="flex items-center justify-center mb-8 animate-fade-in-up">
+                            <div class="relative group">
+                                <div class="w-32 h-32 bg-gradient-to-br from-pure-black via-slate to-pure-black rounded-2xl flex-center transform hover:rotate-12 transition-all duration-700 relative overflow-hidden shadow-2xl">
+                                    <span class="text-pure-white font-bold text-6xl transform group-hover:-rotate-12 transition-transform duration-700">W</span>
+                                    
+                                    <!-- Shine Effect -->
+                                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-pure-white/20 to-transparent -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000"></div>
+                                    
+                                    <!-- Border Glow -->
+                                    <div class="absolute -inset-1 bg-gradient-to-r from-pure-black via-slate to-pure-black rounded-2xl opacity-0 group-hover:opacity-50 blur-lg transition-opacity duration-500"></div>
+                                </div>
+                                
+                                <!-- Orbiting Elements -->
+                                <div class="absolute -inset-8 animate-spin" style="animation-duration: 20s;">
+                                    <div class="absolute top-0 left-1/2 w-3 h-3 bg-slate/40 rounded-full -translate-x-1/2"></div>
+                                    <div class="absolute bottom-0 left-1/2 w-2 h-2 bg-pewter/60 rounded-full -translate-x-1/2"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Main Headline -->
+                        <div class="mb-12 animate-fade-in-up" style="animation-delay: 0.2s;">
+                            <h1 class="text-6xl md:text-8xl font-black mb-6 leading-none">
+                                <span class="bg-gradient-to-r from-pure-black via-slate to-graphite bg-clip-text text-transparent">Vehicle &</span>
+                                <br>
+                                <span class="bg-gradient-to-r from-graphite via-slate to-pure-black bg-clip-text text-transparent">Alloy Wheel</span>
+                                <br>
+                                <span class="text-pure-black relative">
+                                    Refurbishment
+                                    <svg class="absolute -bottom-2 left-0 w-full h-3 text-slate/20" preserveAspectRatio="none" viewBox="0 0 200 10" fill="currentColor">
+                                        <path d="M0,5 Q50,0 100,5 T200,5 L200,10 L0,10 Z"/>
+                                    </svg>
+                                </span>
+                            </h1>
+                            
+                            <div class="relative">
+                                <h2 class="text-2xl md:text-4xl font-light text-pewter mb-8 tracking-wide">
+                                    Professional Business Management System
+                                </h2>
+                                
+                                <!-- Decorative Line -->
+                                <div class="flex items-center justify-center mb-8">
+                                    <div class="h-px bg-gradient-to-r from-transparent via-slate/30 to-transparent w-64"></div>
+                                    <div class="w-2 h-2 bg-slate/50 rounded-full mx-4"></div>
+                                    <div class="h-px bg-gradient-to-r from-transparent via-slate/30 to-transparent w-64"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Subtitle with Typewriter Effect -->
+                        <p class="text-xl md:text-2xl text-slate max-w-4xl mx-auto mb-12 leading-relaxed animate-fade-in-up" style="animation-delay: 0.4s;">
+                            Streamline your refurbishment operations with 
+                            <span class="font-semibold text-pure-black">precision job tracking</span>, 
+                            <span class="font-semibold text-pure-black">intelligent customer management</span>, and 
+                            <span class="font-semibold text-pure-black">comprehensive business analytics</span>
+                        </p>
+                        
+                        <!-- CTA Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16 animate-fade-in-up" style="animation-delay: 0.6s;">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'core:dashboard' %}" class="btn-cinematic-primary text-lg px-12 py-4 relative group overflow-hidden">
+                                    <span class="relative z-10 flex items-center space-x-3">
+                                        <span>Open Dashboard</span>
+                                        <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                        </svg>
+                                    </span>
+                                </a>
+                                <a href="/admin/jobs/job/add/" class="btn-cinematic-secondary text-lg px-12 py-4">
+                                    <span class="flex items-center space-x-3">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                        </svg>
+                                        <span>Create New Job</span>
+                                    </span>
+                                </a>
+                            {% else %}
+                                <a href="{% url 'admin:login' %}" class="btn-cinematic-primary text-lg px-12 py-4 relative group overflow-hidden">
+                                    <span class="relative z-10 flex items-center space-x-3">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                                        </svg>
+                                        <span>Access System</span>
+                                    </span>
+                                </a>
+                                <div class="text-pewter text-lg font-light">
+                                    Professional access required
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Features Showcase -->
+                        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto animate-fade-in-up" style="animation-delay: 0.8s;">
+                            
+                            <!-- Feature 1 -->
+                            <div class="group relative">
+                                <div class="bg-pure-white/80 backdrop-blur-sm border border-medium-gray/30 rounded-2xl p-8 transition-all duration-500 hover:shadow-2xl hover:border-slate/50 hover:-translate-y-2">
+                                    <!-- Icon -->
+                                    <div class="w-16 h-16 bg-gradient-to-br from-pure-black to-slate rounded-xl flex-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                        <svg class="w-8 h-8 text-pure-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                                        </svg>
+                                    </div>
+                                    
+                                    <h3 class="text-2xl font-bold text-pure-black mb-4">Job Management</h3>
+                                    <p class="text-slate leading-relaxed">
+                                        Complete workflow orchestration from initial customer inquiry to final delivery. Track progress, manage timelines, and ensure quality control with precision.
+                                    </p>
+                                    
+                                    <!-- Hover Effect Line -->
+                                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-pure-black to-slate transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-b-2xl"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Feature 2 -->
+                            <div class="group relative">
+                                <div class="bg-pure-white/80 backdrop-blur-sm border border-medium-gray/30 rounded-2xl p-8 transition-all duration-500 hover:shadow-2xl hover:border-slate/50 hover:-translate-y-2">
+                                    <!-- Icon -->
+                                    <div class="w-16 h-16 bg-gradient-to-br from-slate to-graphite rounded-xl flex-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                        <svg class="w-8 h-8 text-pure-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                        </svg>
+                                    </div>
+                                    
+                                    <h3 class="text-2xl font-bold text-pure-black mb-4">Customer Relations</h3>
+                                    <p class="text-slate leading-relaxed">
+                                        Sophisticated customer database with comprehensive contact management, detailed job history tracking, and personalized service records for premium experiences.
+                                    </p>
+                                    
+                                    <!-- Hover Effect Line -->
+                                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-slate to-graphite transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-b-2xl"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Feature 3 -->
+                            <div class="group relative">
+                                <div class="bg-pure-white/80 backdrop-blur-sm border border-medium-gray/30 rounded-2xl p-8 transition-all duration-500 hover:shadow-2xl hover:border-slate/50 hover:-translate-y-2">
+                                    <!-- Icon -->
+                                    <div class="w-16 h-16 bg-gradient-to-br from-graphite to-pure-black rounded-xl flex-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                        <svg class="w-8 h-8 text-pure-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    
+                                    <h3 class="text-2xl font-bold text-pure-black mb-4">Financial Control</h3>
+                                    <p class="text-slate leading-relaxed">
+                                        Advanced payment tracking with intelligent deposit management, real-time outstanding balance monitoring, and comprehensive revenue analytics for informed decisions.
+                                    </p>
+                                    
+                                    <!-- Hover Effect Line -->
+                                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-graphite to-pure-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-b-2xl"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Stats Teaser -->
+                        {% if user.is_authenticated %}
+                        <div class="mt-20 animate-fade-in-up" style="animation-delay: 1s;">
+                            <div class="bg-gradient-to-r from-pure-white/90 via-light-gray/50 to-pure-white/90 backdrop-blur-xl border border-medium-gray/30 rounded-3xl p-8 max-w-4xl mx-auto">
+                                <p class="text-pewter text-lg mb-6">Your Business at a Glance</p>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                                    <div class="text-center">
+                                        <div class="text-4xl font-bold text-pure-black mb-2">15</div>
+                                        <div class="text-pewter text-sm uppercase tracking-wide">Total Jobs</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-4xl font-bold text-pure-black mb-2">$10K</div>
+                                        <div class="text-pewter text-sm uppercase tracking-wide">Revenue</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-4xl font-bold text-pure-black mb-2">5</div>
+                                        <div class="text-pewter text-sm uppercase tracking-wide">Customers</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-4xl font-bold text-pure-black mb-2">7</div>
+                                        <div class="text-pewter text-sm uppercase tracking-wide">Completed</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                    </div>
+                </div>
+            </section>
+            {% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="relative bg-gradient-to-r from-pure-black via-slate to-pure-black text-pure-white py-12 mt-auto overflow-hidden">
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute inset-0" style="background-image: radial-gradient(circle at 25% 25%, white 1px, transparent 1px); background-size: 30px 30px;"></div>
+            </div>
+            
+            <div class="container-cinematic relative z-10">
+                <div class="text-center">
+                    <div class="flex items-center justify-center space-x-3 mb-6">
+                        <div class="w-8 h-8 bg-pure-white flex-center transform rotate-45 rounded-lg">
+                            <span class="text-pure-black font-bold text-lg transform -rotate-45">W</span>
+                        </div>
+                        <span class="text-xl font-semibold">WInki Professional Systems</span>
+                    </div>
+                    <div class="h-px bg-gradient-to-r from-transparent via-pure-white/30 to-transparent max-w-md mx-auto mb-6"></div>
+                    <p class="text-pewter">
+                        © 2024 WInki - Premium Refurbishment Business Management Solution
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    {% block javascript %}
+    <script>
+        // Enhanced interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth reveal animations on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe animation elements
+            document.querySelectorAll('.animate-fade-in-up').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                observer.observe(el);
+            });
+            
+            // Parallax effect for floating elements
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                const parallaxElements = document.querySelectorAll('[class*="blur-"]');
+                
+                parallaxElements.forEach((element, index) => {
+                    const speed = 0.5 + (index * 0.1);
+                    element.style.transform = `translateY(${scrolled * speed}px)`;
+                });
+            });
+            
+            // Enhanced button hover effects
+            document.querySelectorAll('[class*="btn-cinematic"]').forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px) scale(1.02)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Logo rotation on scroll
+            const logo = document.querySelector('.w-32.h-32');
+            if (logo) {
+                window.addEventListener('scroll', function() {
+                    const scrolled = window.pageYOffset;
+                    logo.style.transform = `rotate(${scrolled * 0.1}deg)`;
+                });
+            }
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>
