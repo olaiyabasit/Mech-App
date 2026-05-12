@@ -1,92 +1,94 @@
 {% load static tailwind_tags %}
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
-  <title>{% block title %}WInki — Vehicle & Alloy Wheel Refurbishment{% endblock %}</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Professional vehicle and alloy wheel refurbishment business management">
+  <meta name="description" content="WInki — Professional Vehicle & Alloy Wheel Refurbishment Management">
+  <title>{% block title %}WInki — Refurbishment Management{% endblock %}</title>
   {% tailwind_css %}
   {% block extra_head %}{% endblock %}
+  <style>
+    /* Ensure Inter loads before paint */
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+  </style>
 </head>
 
-<body class="h-full bg-[#f8fafc] text-[#0f172a] antialiased">
+<body style="background:#f9fafb; color:#0d1117; margin:0; padding:0;">
 
 {% if user.is_authenticated %}
-<!-- ═══════════════════════════════════════════════════════════
-     AUTHENTICATED SHELL — sidebar + topbar + content
-     ═══════════════════════════════════════════════════════════ -->
+{# ═══════════════════════════════════════════════════════════ #}
+{#   AUTHENTICATED SHELL                                       #}
+{# ═══════════════════════════════════════════════════════════ #}
 
-<!-- Mobile overlay -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="mob-overlay" id="mobOverlay"></div>
 
 <div class="app-shell">
 
-  <!-- ── Sidebar ── -->
+  <!-- ──────────── Sidebar ──────────── -->
   <aside class="sidebar" id="sidebar">
 
     <!-- Brand -->
     <div class="sidebar-brand">
-      <div class="sidebar-logo">W</div>
-      <div class="sidebar-brand-text">
-        <span class="sidebar-brand-name">WInki</span>
-        <span class="sidebar-brand-sub">Pro Refurbishment</span>
+      <div class="sidebar-logo-mark">W</div>
+      <div class="sidebar-wordmark">
+        <div class="sidebar-app-name">WInki</div>
+        <div class="sidebar-app-sub">Refurbishment Pro</div>
       </div>
     </div>
 
-    <!-- Navigation -->
-    <nav class="sidebar-nav">
+    <!-- Nav -->
+    <nav class="sidebar-nav" aria-label="Primary">
 
-      <span class="sidebar-section-label">Main</span>
+      <span class="sidebar-group-label">Overview</span>
 
       <a href="{% url 'core:dashboard' %}"
-         class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' and request.resolver_match.app_name == 'core' %}active{% endif %}">
-        <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+         class="sidebar-item {% if request.resolver_match.url_name == 'dashboard' and request.resolver_match.app_name == 'core' %}active{% endif %}">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
         </svg>
         Dashboard
       </a>
 
-      <span class="sidebar-section-label">Operations</span>
+      <span class="sidebar-group-label">Operations</span>
 
-      <a href="/admin/jobs/job/" class="sidebar-link {% if 'jobs' in request.path and 'admin' in request.path %}active{% endif %}">
-        <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <a href="/admin/jobs/job/" class="sidebar-item">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
         </svg>
         Jobs
       </a>
 
-      <a href="/admin/customers/customer/" class="sidebar-link {% if 'customers' in request.path and 'admin' in request.path %}active{% endif %}">
-        <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <a href="/admin/customers/customer/" class="sidebar-item">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
         </svg>
         Customers
       </a>
 
-      <a href="/admin/payments/payment/" class="sidebar-link {% if 'payments' in request.path and 'admin' in request.path %}active{% endif %}">
-        <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <a href="/admin/payments/payment/" class="sidebar-item">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
         </svg>
         Payments
       </a>
 
-      <span class="sidebar-section-label">Insights</span>
+      <span class="sidebar-group-label">Analytics</span>
 
       <a href="{% url 'reports:dashboard' %}"
-         class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' and request.resolver_match.app_name == 'reports' %}active{% endif %}">
-        <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+         class="sidebar-item {% if request.resolver_match.url_name == 'dashboard' and request.resolver_match.app_name == 'reports' %}active{% endif %}">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
         </svg>
-        Reports & Analytics
+        Reports
       </a>
 
-      <span class="sidebar-section-label">System</span>
+      <span class="sidebar-group-label">System</span>
 
-      <a href="/admin/" class="sidebar-link {% if request.path == '/admin/' %}active{% endif %}">
-        <svg class="sidebar-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      <a href="/admin/" class="sidebar-item">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
         </svg>
         Admin Panel
       </a>
@@ -95,17 +97,18 @@
 
     <!-- User footer -->
     <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="sidebar-avatar">
-          {{ user.first_name|first|default:user.username|first|upper }}
-        </div>
-        <div class="sidebar-user-info">
+      <div class="sidebar-user-row">
+        <div class="sidebar-avatar">{{ user.first_name|first|default:user.username|first|upper }}</div>
+        <div style="flex:1;min-width:0;">
           <div class="sidebar-user-name">{{ user.first_name|default:user.username }}</div>
-          <div class="sidebar-user-role">Administrator</div>
+          <div style="font-size:.6875rem;color:#6b7a92;">Administrator</div>
         </div>
-        <a href="{% url 'admin:logout' %}" title="Logout"
-           class="ml-auto p-1.5 rounded-lg hover:bg-white/10 text-[#94a3b8] hover:text-white transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <a href="{% url 'admin:logout' %}"
+           title="Sign out"
+           style="flex-shrink:0;width:1.75rem;height:1.75rem;display:flex;align-items:center;justify-content:center;border-radius:.375rem;color:#6b7a92;transition:background .12s,color .12s;"
+           onmouseover="this.style.background='rgba(255,255,255,.1)';this.style.color='#fff';"
+           onmouseout="this.style.background='transparent';this.style.color='#6b7a92';">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
           </svg>
         </a>
@@ -113,30 +116,27 @@
     </div>
 
   </aside>
-  <!-- /sidebar -->
 
-  <!-- ── Main area ── -->
-  <div class="main-area">
+  <!-- ──────────── Main area ──────────── -->
+  <div class="main-wrap">
 
     <!-- Topbar -->
     <header class="topbar">
-      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <button class="topbar-hamburger" id="sidebarToggle" aria-label="Open menu">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
       </button>
 
-      <!-- Breadcrumb -->
       <nav class="topbar-breadcrumb" aria-label="Breadcrumb">
-        <span class="topbar-breadcrumb-item">WInki</span>
-        <span class="topbar-breadcrumb-sep">›</span>
-        <span class="topbar-breadcrumb-current">{% block page_name %}Overview{% endblock %}</span>
+        <span class="bc-parent">WInki</span>
+        <span class="bc-sep">›</span>
+        <span class="bc-current">{% block page_name %}Overview{% endblock %}</span>
       </nav>
 
-      <!-- Actions -->
-      <div class="topbar-actions">
-        <a href="/admin/jobs/job/add/" class="btn-cinematic-primary">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+      <div class="topbar-end">
+        <a href="/admin/jobs/job/add/" class="btn-cinematic-primary" style="font-size:.8125rem;padding:.4375rem .875rem;">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
           </svg>
           New Job
@@ -144,115 +144,186 @@
       </div>
     </header>
 
-    <!-- Page content -->
-    <main class="page-content {% block main_classes %}{% endblock %}">
+    <!-- Content -->
+    <main class="page-body {% block main_classes %}{% endblock %}">
       {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="px-7 py-4 border-t border-[#e2e8f0] bg-white">
-      <p class="text-xs text-[#94a3b8]">© 2024 WInki Professional — Vehicle & Alloy Wheel Refurbishment Management</p>
+    <footer style="padding:.875rem 1.5rem;border-top:1px solid #e4e8ef;background:#fff;">
+      <p style="font-size:.75rem;color:#96a3b8;margin:0;">© 2024 WInki Professional — Vehicle & Alloy Wheel Refurbishment Management System</p>
     </footer>
 
   </div>
-  <!-- /main-area -->
 
 </div>
-<!-- /app-shell -->
 
+<script>
+(function () {
+  var sidebar = document.getElementById('sidebar');
+  var toggle  = document.getElementById('sidebarToggle');
+  var overlay = document.getElementById('mobOverlay');
+  if (!sidebar || !toggle) return;
+  function open()  { sidebar.classList.add('open'); overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function close() { sidebar.classList.remove('open'); overlay.classList.remove('open'); document.body.style.overflow = ''; }
+  toggle.addEventListener('click', function () { sidebar.classList.contains('open') ? close() : open(); });
+  overlay.addEventListener('click', close);
+})();
+</script>
 
 {% else %}
-<!-- ═══════════════════════════════════════════════════════════
-     UNAUTHENTICATED — full-page landing
-     ═══════════════════════════════════════════════════════════ -->
-<div class="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] flex flex-col">
+{# ═══════════════════════════════════════════════════════════ #}
+{#   PUBLIC LANDING PAGE                                       #}
+{# ═══════════════════════════════════════════════════════════ #}
+<style>
+  .landing-body { min-height: 100vh; background: #0d1117; display: flex; flex-direction: column; font-family: 'Inter', -apple-system, sans-serif; }
 
-  <!-- Landing Nav -->
-  <header class="px-8 py-5 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 bg-gradient-to-br from-[#6366f1] to-[#4338ca] rounded-xl flex items-center justify-center font-bold text-white text-sm shadow-lg">W</div>
+  /* Nav */
+  .lnav { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 2rem; border-bottom: 1px solid rgba(255,255,255,.06); }
+  .lnav-brand { display: flex; align-items: center; gap: .625rem; }
+  .lnav-mark  { width: 2rem; height: 2rem; border-radius: .5rem; background: linear-gradient(135deg,#5e56ec,#3d35c4); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .9375rem; color: #fff; }
+  .lnav-name  { font-size: .9375rem; font-weight: 700; color: #fff; letter-spacing: -.01em; }
+  .lnav-sub   { font-size: .625rem; color: #6b7a92; text-transform: uppercase; letter-spacing: .08em; }
+
+  /* Hero */
+  .lhero { flex: 1; display: flex; align-items: center; justify-content: center; padding: 4rem 2rem; position: relative; overflow: hidden; }
+  .lhero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .lhero-glow-1 { position: absolute; top: -10%; left: 50%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(93,86,236,.18) 0%, transparent 70%); transform: translateX(-50%); }
+  .lhero-glow-2 { position: absolute; bottom: -20%; right: -5%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(16,160,101,.1) 0%, transparent 70%); }
+  .lhero-grid  { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px); background-size: 48px 48px; }
+
+  .lhero-content { position: relative; z-index: 1; text-align: center; max-width: 700px; }
+
+  .lbadge { display: inline-flex; align-items: center; gap: .375rem; background: rgba(93,86,236,.12); border: 1px solid rgba(93,86,236,.25); color: #a5a0f7; font-size: .75rem; font-weight: 600; padding: .3125rem .875rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 1.75rem; }
+  .lbadge-dot { width: .4375rem; height: .4375rem; border-radius: 9999px; background: #5e56ec; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(.85)} }
+
+  .lh1 { font-size: clamp(2.25rem, 6vw, 3.5rem); font-weight: 800; color: #fff; line-height: 1.12; letter-spacing: -.035em; margin: 0 0 1.25rem; }
+  .lh1 .accent { background: linear-gradient(135deg, #7b74f3 0%, #5e56ec 50%, #4d44d8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+  .lp { font-size: 1.0625rem; color: #96a3b8; line-height: 1.7; margin: 0 0 2.5rem; max-width: 520px; margin-left: auto; margin-right: auto; }
+
+  .lcta { display: inline-flex; align-items: center; gap: .5rem; background: #5e56ec; color: #fff; font-size: .9375rem; font-weight: 600; padding: .8125rem 1.75rem; border-radius: .625rem; border: none; cursor: pointer; text-decoration: none; transition: background .15s, transform .15s, box-shadow .15s; box-shadow: 0 4px 16px rgba(93,86,236,.35); }
+  .lcta:hover { background: #4d44d8; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(93,86,236,.45); color: #fff; }
+
+  /* Feature grid */
+  .lfeat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.06); border-radius: .875rem; overflow: hidden; margin-top: 4rem; }
+  .lfeat-cell { background: #0d1117; padding: 1.5rem; display: flex; flex-direction: column; gap: .5rem; transition: background .15s; }
+  .lfeat-cell:hover { background: #161b27; }
+  .lfeat-icon { width: 2.25rem; height: 2.25rem; border-radius: .5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .lfeat-icon svg { width: 1.125rem; height: 1.125rem; }
+  .lfeat-title { font-size: .9375rem; font-weight: 600; color: #fff; }
+  .lfeat-desc  { font-size: .8125rem; color: #6b7a92; line-height: 1.5; }
+
+  /* Stats bar */
+  .lstats { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0; margin-top: 3rem; border: 1px solid rgba(255,255,255,.06); border-radius: .875rem; overflow: hidden; background: rgba(255,255,255,.02); }
+  .lstat-cell { flex: 1; min-width: 140px; padding: 1.25rem 1.5rem; text-align: center; border-right: 1px solid rgba(255,255,255,.06); }
+  .lstat-cell:last-child { border-right: none; }
+  .lstat-num { font-size: 1.625rem; font-weight: 800; color: #fff; letter-spacing: -.03em; }
+  .lstat-lbl { font-size: .75rem; color: #6b7a92; font-weight: 500; text-transform: uppercase; letter-spacing: .05em; margin-top: .25rem; }
+
+  /* Footer */
+  .lfooter { padding: 1.5rem 2rem; border-top: 1px solid rgba(255,255,255,.06); display: flex; align-items: center; justify-content: center; }
+  .lfooter p { font-size: .8125rem; color: #4a566a; margin: 0; }
+
+  @media (max-width:600px) {
+    .lnav { padding: 1rem; }
+    .lhero { padding: 2.5rem 1rem; }
+    .lfeat-grid { grid-template-columns: 1fr 1fr; }
+    .lstats { flex-direction: column; }
+    .lstat-cell { border-right: none; border-bottom: 1px solid rgba(255,255,255,.06); width: 100%; }
+    .lstat-cell:last-child { border-bottom: none; }
+  }
+</style>
+
+<div class="landing-body">
+
+  <!-- Nav -->
+  <header class="lnav">
+    <div class="lnav-brand">
+      <div class="lnav-mark">W</div>
       <div>
-        <div class="text-white font-bold text-base leading-none">WInki</div>
-        <div class="text-[#94a3b8] text-xs mt-0.5 uppercase tracking-widest">Professional</div>
+        <div class="lnav-name">WInki</div>
+        <div class="lnav-sub">Professional</div>
       </div>
     </div>
-    <a href="{% url 'admin:login' %}" class="btn-cinematic-primary">Sign In</a>
+    <a href="{% url 'admin:login' %}" class="lcta" style="padding:.5rem 1.25rem;font-size:.875rem;">Sign In</a>
   </header>
 
   <!-- Hero -->
-  <main class="flex-1 flex items-center justify-center px-6 py-16">
-    <div class="text-center max-w-3xl">
+  <section class="lhero">
+    <div class="lhero-bg">
+      <div class="lhero-glow-1"></div>
+      <div class="lhero-glow-2"></div>
+      <div class="lhero-grid"></div>
+    </div>
 
-      <!-- Badge -->
-      <div class="inline-flex items-center gap-2 bg-[#6366f1]/15 border border-[#6366f1]/30 text-[#a5b4fc] text-xs font-semibold px-4 py-1.5 rounded-full mb-8 uppercase tracking-widest">
-        <span class="w-1.5 h-1.5 rounded-full bg-[#6366f1] animate-pulse"></span>
+    <div class="lhero-content">
+
+      <div class="lbadge">
+        <span class="lbadge-dot"></span>
         Business Management System
       </div>
 
-      <h1 class="text-5xl md:text-6xl font-extrabold text-white leading-tight mb-5 tracking-tight">
+      <h1 class="lh1">
         Vehicle & Alloy Wheel<br>
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#818cf8]">Refurbishment Hub</span>
+        <span class="accent">Refurbishment Hub</span>
       </h1>
 
-      <p class="text-lg text-[#94a3b8] leading-relaxed mb-10 max-w-xl mx-auto">
-        Track jobs end-to-end, manage customers, control payments, and gain real-time business intelligence — all in one place.
+      <p class="lp">
+        Track every job end-to-end, manage customers, control payments, and gain real-time business intelligence — all in one professional platform.
       </p>
 
-      <a href="{% url 'admin:login' %}"
-         class="inline-flex items-center gap-2.5 bg-[#6366f1] hover:bg-[#4f46e5] text-white font-semibold px-8 py-3.5 rounded-xl transition-all shadow-lg hover:shadow-[#6366f1]/30 hover:shadow-xl hover:-translate-y-0.5">
+      <a href="{% url 'admin:login' %}" class="lcta">
         Access the System
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
         </svg>
       </a>
 
-      <!-- Feature pills -->
-      <div class="flex flex-wrap gap-3 justify-center mt-12">
-        <span class="bg-white/5 border border-white/10 text-[#cbd5e1] text-sm px-4 py-1.5 rounded-full">Job Tracking</span>
-        <span class="bg-white/5 border border-white/10 text-[#cbd5e1] text-sm px-4 py-1.5 rounded-full">Customer CRM</span>
-        <span class="bg-white/5 border border-white/10 text-[#cbd5e1] text-sm px-4 py-1.5 rounded-full">Payment Control</span>
-        <span class="bg-white/5 border border-white/10 text-[#cbd5e1] text-sm px-4 py-1.5 rounded-full">Business Reports</span>
+      <!-- Feature grid -->
+      <div class="lfeat-grid" style="margin-top:3rem;">
+        <div class="lfeat-cell">
+          <div class="lfeat-icon" style="background:rgba(93,86,236,.15);">
+            <svg fill="none" stroke="#7b74f3" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          </div>
+          <div class="lfeat-title">Job Tracking</div>
+          <div class="lfeat-desc">Full workflow from intake to delivery</div>
+        </div>
+        <div class="lfeat-cell">
+          <div class="lfeat-icon" style="background:rgba(16,160,101,.12);">
+            <svg fill="none" stroke="#10a065" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <div class="lfeat-title">Customer CRM</div>
+          <div class="lfeat-desc">Manage clients & job history</div>
+        </div>
+        <div class="lfeat-cell">
+          <div class="lfeat-icon" style="background:rgba(196,112,2,.12);">
+            <svg fill="none" stroke="#c47002" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="lfeat-title">Payments</div>
+          <div class="lfeat-desc">Track deposits & balances</div>
+        </div>
+        <div class="lfeat-cell">
+          <div class="lfeat-icon" style="background:rgba(4,117,187,.12);">
+            <svg fill="none" stroke="#0475bb" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <div class="lfeat-title">Reports</div>
+          <div class="lfeat-desc">PDF & CSV business exports</div>
+        </div>
       </div>
 
     </div>
-  </main>
+  </section>
 
-  <footer class="text-center py-6 text-[#475569] text-xs">
-    © 2024 WInki Professional Systems
+  <footer class="lfooter">
+    <p>© 2024 WInki Professional Systems — Vehicle & Alloy Wheel Refurbishment</p>
   </footer>
 
 </div>
 {% endif %}
 
-{% block javascript %}
-<script>
-(function () {
-  var sidebar = document.getElementById('sidebar');
-  var toggle  = document.getElementById('sidebarToggle');
-  var overlay = document.getElementById('sidebarOverlay');
-
-  if (!sidebar || !toggle) return;
-
-  function openSidebar() {
-    sidebar.classList.add('open');
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeSidebar() {
-    sidebar.classList.remove('open');
-    overlay.classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  toggle.addEventListener('click', function () {
-    sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
-  });
-
-  overlay.addEventListener('click', closeSidebar);
-})();
-</script>
-{% endblock %}
+{% block javascript %}{% endblock %}
 
 </body>
 </html>
