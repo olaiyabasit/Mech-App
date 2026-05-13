@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% block title %}{% if action == 'Edit' %}Edit {{ job.job_id }}{% else %}New Job{% endif %} — WInki{% endblock %}
+{% block page_name %}{% if action == 'Edit' %}Edit Job{% else %}New Job{% endif %}{% endblock %}
+
+{% block content %}
+{% if messages %}{% for msg in messages %}
+<div class="walert walert-{{ msg.tags }}" style="margin-bottom:1rem">{{ msg }}</div>
+{% endfor %}{% endif %}
+
+<div class="dash-greeting">
+  <div>
+    <div class="dash-greeting-title">{% if action == 'Edit' %}Edit {{ job.job_id }}{% else %}Create New Job{% endif %}</div>
+    <div class="dash-greeting-sub">{% if action == 'Edit' %}Update job details{% else %}Fill in the form to create a new job{% endif %}</div>
+  </div>
+  <a href="{% url 'jobs:list' %}" class="dbtn dbtn-ghost">← Back to Jobs</a>
+</div>
+
+<form method="post" id="jobForm">
+{% csrf_token %}
+<div style="display:grid;grid-template-columns:1fr 340px;gap:1.25rem;align-items:start">
+
+  {# Main form #}
+  <div style="display:flex;flex-direction:column;gap:1.25rem">
+
+    {# Core info #}
+    <div class="dcard">
+      <div class="dcard-head"><div class="dcard-title">Job Information</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="wform-group" style="grid-column:1/-1">
+          <label class="wform-label">Customer <span style="color:var(--color-rose-600)">*</span></label>
+          <select name="customer" class="wform-input" required>
+            <option value="">— Select Customer —</option>
+            {% for c in customers %}
+            <option value="{{ c.customer_id }}" {% if job and job.customer_id == c.customer_id %}selected{% endif %}>
+              {{ c.name }} {% if c.phone %}({{ c.phone }}){% endif %}
+            </option>
+            {% endfor %}
+          </select>
+          <div style="margin-top:.5rem">
+            <a href="{% url 'customers:create' %}" target="_blank" style="font-size:.8rem;color:var(--color-violet-500)">+ Add new customer</a>
+          </div>
+        </div>
+
+        <div class="wform-group">
+          <label class="wform-label">Job Type <span style="color:var(--color-rose-600)">*</span></label>
+          <select name="job_type" class="wform-input" id="jobTypeSelect" required>
+            {% for val,label in type_choices %}
+            <option value="{{ val }}" {% if job and job.job_type == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="wform-group">
+          <label class="wform-label">Status</label>
+          <select name="status" class="wform-input">
+            {% for val,label in status_choices %}
+            <option value="{{ val }}" {% if job and job.status == val %}selected{% elif not job and val == 'pending' %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="wform-group">
+          <label class="wform-label">Total Cost ($)</label>
+          <input type="number" name="total_cost" step="0.01" min="0" class="wform-input"
+                 value="{{ job.total_cost|default:'' }}" placeholder="0.00">
+        </div>
+
+        <div class="wform-group">
+          <label class="wform-label">Deposit ($)</label>
+          <input type="number" name="deposit_amount" step="0.01" min="0" class="wform-input"
+                 value="{{ job.deposit_amount|default:'' }}" placeholder="0.00">
+        </div>
+
+        <div class="wform-group">
+          <label class="wform-label">Expected Completion</label>
+          <input type="date" name="expected_completion" class="wform-input"
+                 value="{{ job.expected_completion|date:'Y-m-d'|default:'' }}">
+        </div>
+
+        <div class="wform-group" style="grid-column:1/-1">
+          <label class="wform-label">Description <span style="color:var(--color-rose-600)">*</span></label>
+          <textarea name="description" class="wform-input" rows="4" required
+                    placeholder="Describe the work to be performed…">{{ job.description|default:'' }}</textarea>
+        </div>
+
+        <div class="wform-group" style="grid-column:1/-1">
+          <label class="wform-label">Internal Notes</label>
+          <textarea name="internal_notes" class="wform-input" rows="2"
+                    placeholder="Staff-only notes (not shown to customer)">{{ job.internal_notes|default:'' }}</textarea>
+        </div>
+      </div>
+    </div>
+
+    {# Vehicle details #}
+    <div class="dcard" id="vehicleSection">
+      <div class="dcard-head"><div class="dcard-title">Vehicle Details</div><span style="font-size:.75rem;color:var(--color-ink-400)">For vehicle refurbishment jobs</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="wform-group"><label class="wform-label">Make</label><input type="text" name="vehicle_make" class="wform-input" value="{{ vehicle.make|default:'' }}" placeholder="Toyota"></div>
+        <div class="wform-group"><label class="wform-label">Model</label><input type="text" name="vehicle_model" class="wform-input" value="{{ vehicle.model|default:'' }}" placeholder="Camry"></div>
+        <div class="wform-group"><label class="wform-label">Year</label><input type="number" name="vehicle_year" class="wform-input" value="{{ vehicle.year|default:'' }}" placeholder="2022" min="1980" max="2030"></div>
+        <div class="wform-group"><label class="wform-label">Plate Number</label><input type="text" name="plate_number" class="wform-input" value="{{ vehicle.plate_number|default:'' }}" placeholder="ABC-123" style="font-family:monospace;font-weight:600;text-transform:uppercase"></div>
+        <div class="wform-group"><label class="wform-label">Color</label><input type="text" name="vehicle_color" class="wform-input" value="{{ vehicle.color|default:'' }}" placeholder="White"></div>
+        <div class="wform-group"><label class="wform-label">Mileage (km)</label><input type="number" name="mileage" class="wform-input" value="{{ vehicle.mileage|default:'' }}" placeholder="50000"></div>
+        <div class="wform-group" style="grid-column:1/-1"><label class="wform-label">VIN Number</label><input type="text" name="vin_number" class="wform-input" value="{{ vehicle.vin_number|default:'' }}" placeholder="1HGBH41JXMN109186" style="font-family:monospace"></div>
+      </div>
+    </div>
+
+    {# Alloy details #}
+    <div class="dcard" id="alloySection">
+      <div class="dcard-head"><div class="dcard-title">Alloy Wheel Details</div><span style="font-size:.75rem;color:var(--color-ink-400)">For alloy wheel jobs</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="wform-group"><label class="wform-label">Wheel Size</label><input type="text" name="wheel_size" class="wform-input" value="{{ alloy.wheel_size|default:'' }}" placeholder="17x8"></div>
+        <div class="wform-group"><label class="wform-label">Quantity</label><input type="number" name="wheel_quantity" class="wform-input" value="{{ alloy.quantity|default:'4' }}" min="1" max="10"></div>
+        <div class="wform-group"><label class="wform-label">Brand</label><input type="text" name="wheel_brand" class="wform-input" value="{{ alloy.brand|default:'' }}" placeholder="OZ Racing"></div>
+        <div class="wform-group"><label class="wform-label">Model</label><input type="text" name="wheel_model_alloy" class="wform-input" value="{{ alloy.model|default:'' }}" placeholder="Ultraleggera"></div>
+        <div class="wform-group"><label class="wform-label">Finish Type</label><input type="text" name="finish_type" class="wform-input" value="{{ alloy.finish_type|default:'' }}" placeholder="Gloss Black"></div>
+        <div class="wform-group" style="grid-column:1/-1"><label class="wform-label">Damage Description</label><textarea name="damage_description" class="wform-input" rows="3" placeholder="Describe the damage or work required…">{{ alloy.damage_description|default:'' }}</textarea></div>
+      </div>
+    </div>
+
+  </div>
+
+  {# Right panel #}
+  <div style="position:sticky;top:80px;display:flex;flex-direction:column;gap:1rem">
+    <div class="dcard">
+      <div class="dcard-title" style="margin-bottom:1.25rem">Save Job</div>
+      <button type="submit" class="dbtn dbtn-primary" style="width:100%;justify-content:center;padding:.75rem;font-size:.9375rem">
+        {% if action == 'Edit' %}Update Job{% else %}Create Job{% endif %}
+      </button>
+      <a href="{% url 'jobs:list' %}" class="dbtn dbtn-ghost" style="width:100%;justify-content:center;margin-top:.625rem">Cancel</a>
+      {% if action == 'Edit' %}
+      <a href="{% url 'jobs:delete' pk=job.job_id %}" class="dbtn" style="width:100%;justify-content:center;margin-top:.5rem;background:var(--color-rose-50);color:var(--color-rose-600);border:1px solid var(--color-rose-100)">Delete Job</a>
+      {% endif %}
+    </div>
+    <div class="dcard" style="background:var(--color-violet-50);border-color:var(--color-violet-200)">
+      <div style="font-size:.8125rem;color:var(--color-violet-600);font-weight:600;margin-bottom:.5rem">💡 Tips</div>
+      <ul style="font-size:.8rem;color:var(--color-ink-500);list-style:none;padding:0;line-height:1.8">
+        <li>• Set expected completion for overdue tracking</li>
+        <li>• Vehicle details are required for vehicle jobs</li>
+        <li>• Record a deposit payment after saving</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+</form>
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script>
+function updateSections() {
+  const type = document.getElementById('jobTypeSelect').value;
+  const v = document.getElementById('vehicleSection');
+  const a = document.getElementById('alloySection');
+  if(v) v.style.display = (type === 'vehicle' || type === 'both') ? '' : 'none';
+  if(a) a.style.display = (type === 'alloy' || type === 'both') ? '' : 'none';
+}
+document.getElementById('jobTypeSelect')?.addEventListener('change', updateSections);
+document.addEventListener('DOMContentLoaded', updateSections);
+</script>
+{% endblock %}

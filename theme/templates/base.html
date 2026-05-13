@@ -97,7 +97,7 @@
         Dashboard
       </a>
 
-      <a href="/admin/jobs/job/" class="sidebar-item">
+      <a href="{% url 'jobs:list' %}" class="sidebar-item {% if request.resolver_match.app_name == 'jobs' %}active{% endif %}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
           <rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/>
@@ -106,7 +106,7 @@
         {% if overdue_count %}<span class="sidebar-badge">{{ overdue_count }}</span>{% endif %}
       </a>
 
-      <a href="/admin/customers/customer/" class="sidebar-item">
+      <a href="{% url 'customers:list' %}" class="sidebar-item {% if request.resolver_match.app_name == 'customers' %}active{% endif %}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
           <circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
@@ -114,7 +114,7 @@
         Customers
       </a>
 
-      <a href="/admin/payments/payment/" class="sidebar-item">
+      <a href="{% url 'payments:list' %}" class="sidebar-item {% if request.resolver_match.app_name == 'payments' %}active{% endif %}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="1" y="4" width="22" height="16" rx="2"/>
           <path d="M1 10h22"/>
@@ -132,15 +132,7 @@
         Analytics
       </a>
 
-      <div class="sidebar-group-label" style="margin-top:.75rem">System</div>
 
-      <a href="/admin/" class="sidebar-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"/>
-        </svg>
-        Admin Panel
-      </a>
 
     </nav>
 
@@ -153,7 +145,7 @@
           <div style="font-size:.6875rem;color:var(--color-ink-400);">Staff</div>
         </div>
       </div>
-      <a href="{% url 'admin:logout' %}" class="sidebar-item" style="color:var(--color-rose-600);">
+      <a href="{% url 'logout' %}" class="sidebar-item" style="color:var(--color-rose-600);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
         </svg>
@@ -181,7 +173,7 @@
         <span class="topbar-title">{% block page_name %}WInki{% endblock %}</span>
       </div>
       <div style="display:flex;align-items:center;gap:.75rem">
-        <a href="/admin/jobs/job/add/"
+        <a href="{% url 'jobs:create' %}"
            style="display:inline-flex;align-items:center;gap:.375rem;padding:.4rem .875rem;background:var(--color-violet-500);color:#fff;border-radius:8px;font-size:.8125rem;font-weight:600;text-decoration:none;transition:background .15s">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M12 5v14M5 12h14"/>
@@ -230,7 +222,7 @@
   <div class="llogo">W</div>
   <h1 class="lheadline">Vehicle &amp; Alloy Wheel<br>Refurbishment</h1>
   <p class="lsub">Streamline your operations with precision job tracking, intelligent customer management, and comprehensive business analytics.</p>
-  <a href="{% url 'admin:login' %}" class="lbtn">
+  <a href="{% url 'login' %}" class="lbtn">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/>
     </svg>

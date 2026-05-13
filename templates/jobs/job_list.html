@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block title %}Jobs — WInki{% endblock %}
+{% block page_name %}Jobs{% endblock %}
+
+{% block content %}
+{% if messages %}
+  {% for msg in messages %}
+  <div class="walert walert-{{ msg.tags }}" style="margin-bottom:1rem">{{ msg }}</div>
+  {% endfor %}
+{% endif %}
+
+<div class="dash-greeting">
+  <div>
+    <div class="dash-greeting-title">All Jobs</div>
+    <div class="dash-greeting-sub">{{ total }} job{{ total|pluralize }} found</div>
+  </div>
+  <a href="{% url 'jobs:create' %}" class="dbtn dbtn-primary" style="padding:.5rem 1.25rem;font-size:.875rem">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+    New Job
+  </a>
+</div>
+
+{# Filters #}
+<div class="dcard" style="margin-bottom:1.25rem;padding:1rem 1.5rem">
+  <form method="get" style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+    <div style="flex:1;min-width:200px;position:relative">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           style="position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--color-ink-400)">
+        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+      </svg>
+      <input type="text" name="q" value="{{ q }}" placeholder="Search jobs, customers, plates…"
+             style="width:100%;padding:.5rem .75rem .5rem 2.25rem;border:1px solid var(--color-ink-200);border-radius:8px;font-size:.875rem;outline:none;background:#fff">
+    </div>
+    <select name="status" style="padding:.5rem .875rem;border:1px solid var(--color-ink-200);border-radius:8px;font-size:.875rem;background:#fff;color:var(--color-ink-700)">
+      <option value="">All Statuses</option>
+      {% for val,label in status_choices %}
+      <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <select name="type" style="padding:.5rem .875rem;border:1px solid var(--color-ink-200);border-radius:8px;font-size:.875rem;background:#fff;color:var(--color-ink-700)">
+      <option value="">All Types</option>
+      {% for val,label in type_choices %}
+      <option value="{{ val }}" {% if type_filter == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="dbtn dbtn-primary">Filter</button>
+    {% if q or status_filter or type_filter %}
+    <a href="{% url 'jobs:list' %}" class="dbtn dbtn-ghost">Clear</a>
+    {% endif %}
+  </form>
+</div>
+
+{# Table #}
+<div class="dcard dcard-flush">
+  <div class="dtable-wrap">
+    <table class="dtable">
+      <thead>
+        <tr>
+          <th>Job ID</th>
+          <th>Customer</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Expected</th>
+          <th style="text-align:right">Total</th>
+          <th style="text-align:right">Outstanding</th>
+          <th>Created</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for job in jobs %}
+        <tr class="dtable-row">
+          <td>
+            <a href="{% url 'jobs:detail' pk=job.job_id %}" class="djob-id">{{ job.job_id }}</a>
+          </td>
+          <td>
+            <div class="dtable-primary">{{ job.customer.name }}</div>
+            <div class="dtable-secondary">{{ job.customer.phone }}</div>
+          </td>
+          <td><span class="dtable-tag">{{ job.get_job_type_display }}</span></td>
+          <td>
+            {% if job.status == 'pending' %}<span class="dstatus dstatus-pending">Pending</span>
+            {% elif job.status == 'in_progress' %}<span class="dstatus dstatus-progress">In Progress</span>
+            {% elif job.status == 'completed' %}<span class="dstatus dstatus-completed">Completed</span>
+            {% elif job.status == 'delivered' %}<span class="dstatus dstatus-delivered">Delivered</span>
+            {% elif job.status == 'cancelled' %}<span class="dstatus dstatus-cancelled">Cancelled</span>
+            {% endif %}
+            {% if job.is_overdue %}<span class="dstatus dstatus-overdue">Overdue</span>{% endif %}
+          </td>
+          <td class="dtable-secondary">
+            {{ job.expected_completion|date:"M d, Y"|default:"—" }}
+          </td>
+          <td style="text-align:right;font-weight:700">${{ job.total_cost }}</td>
+          <td style="text-align:right">
+            {% if job.outstanding_balance > 0 %}
+              <span style="color:var(--color-amber-600);font-weight:700">${{ job.outstanding_balance }}</span>
+            {% else %}
+              <span style="color:var(--color-emerald-600);font-weight:600">Paid</span>
+            {% endif %}
+          </td>
+          <td class="dtable-secondary">{{ job.created_date|date:"M d, Y" }}</td>
+          <td>
+            <div style="display:flex;gap:.25rem">
+              <a href="{% url 'jobs:detail' pk=job.job_id %}" class="dtable-action" title="View">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </a>
+              <a href="{% url 'jobs:edit' pk=job.job_id %}" class="dtable-action" title="Edit">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </a>
+              <a href="{% url 'jobs:delete' pk=job.job_id %}" class="dtable-action" title="Delete" style="color:var(--color-rose-600)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6"/></svg>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="9" style="text-align:center;padding:3rem;color:var(--color-ink-400)">
+          No jobs found. <a href="{% url 'jobs:create' %}" style="color:var(--color-violet-500)">Create one →</a>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

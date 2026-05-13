@@ -12,10 +12,11 @@ admin.site.site_title = "WInki Admin"
 admin.site.index_title = "Welcome to WInki Administration"
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('apps.core.urls')),
     path('jobs/', include('apps.jobs.urls')),
+    path('customers/', include('apps.customers.urls')),
+    path('payments/', include('apps.payments.urls')),
     path('reports/', include('apps.reports.urls')),
 ]
 

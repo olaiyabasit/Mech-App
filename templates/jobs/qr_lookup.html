@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Job Status — {{ job.job_id }}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#060810;color:#e6edf3;font-family:system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.card{background:#0d1117;border:1px solid #1e2635;border-radius:16px;padding:2rem;max-width:420px;width:100%;text-align:center}
+.logo{width:56px;height:56px;background:linear-gradient(135deg,#5e56ec,#3d38b0);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.5rem;color:#fff;margin:0 auto 1.5rem}
+h1{font-size:1.5rem;font-weight:800;margin-bottom:.375rem}
+.job-id{font-family:monospace;font-size:1.1rem;color:#7b74f0;font-weight:700;margin-bottom:1.5rem}
+.status-pill{display:inline-block;padding:.5rem 1.5rem;border-radius:30px;font-size:.9375rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:1.5rem}
+.s-pending{background:#fef3c7;color:#b45309}
+.s-in_progress{background:#e8e7fd;color:#3d38b0}
+.s-completed{background:#e0f2fe;color:#0369a1}
+.s-delivered{background:#d1fae5;color:#0b8a54}
+.s-cancelled{background:#f1f5f9;color:#475569}
+.row{display:flex;justify-content:space-between;padding:.625rem 0;border-bottom:1px solid #1e2635;text-align:left}
+.row:last-child{border-bottom:none}
+.lbl{font-size:.8125rem;color:#566784}
+.val{font-size:.875rem;font-weight:600;color:#e6edf3}
+.footer{margin-top:1.5rem;font-size:.75rem;color:#3d4f68}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">W</div>
+  <h1>{{ job.customer.name }}</h1>
+  <div class="job-id">{{ job.job_id }}</div>
+  <div class="status-pill s-{{ job.status }}">{{ job.get_status_display }}</div>
+  <div>
+    <div class="row"><span class="lbl">Service Type</span><span class="val">{{ job.get_job_type_display }}</span></div>
+    {% if job.expected_completion %}<div class="row"><span class="lbl">Expected Completion</span><span class="val">{{ job.expected_completion|date:"M d, Y" }}</span></div>{% endif %}
+    {% if job.outstanding_balance > 0 %}<div class="row"><span class="lbl">Outstanding Balance</span><span class="val" style="color:#f59e0b">${{ job.outstanding_balance }}</span></div>{% endif %}
+    {% if job.delivered_date %}<div class="row"><span class="lbl">Delivered</span><span class="val" style="color:#10a065">{{ job.delivered_date|date:"M d, Y" }}</span></div>{% endif %}
+  </div>
+  <div class="footer">WInki — Professional Vehicle & Alloy Wheel Refurbishment</div>
+</div>
+</body>
+</html>

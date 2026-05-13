@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Payments — WInki{% endblock %}
+{% block page_name %}Payments{% endblock %}
+{% block content %}
+{% if messages %}{% for msg in messages %}<div class="walert walert-{{ msg.tags }}" style="margin-bottom:1rem">{{ msg }}</div>{% endfor %}{% endif %}
+
+<div class="dash-greeting">
+  <div>
+    <div class="dash-greeting-title">Payments</div>
+    <div class="dash-greeting-sub">{{ total }} transaction{{ total|pluralize }} · Total: <strong style="color:var(--color-emerald-600)">${{ total_amount|floatformat:2 }}</strong></div>
+  </div>
+  <a href="{% url 'payments:create' %}" class="dbtn dbtn-primary" style="padding:.5rem 1.25rem;font-size:.875rem">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+    Record Payment
+  </a>
+</div>
+
+<div class="dcard" style="margin-bottom:1.25rem;padding:1rem 1.5rem">
+  <form method="get" style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+    <div style="flex:1;min-width:200px;position:relative">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--color-ink-400)"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" name="q" value="{{ q }}" placeholder="Search job, customer, reference…"
+             style="width:100%;padding:.5rem .75rem .5rem 2.25rem;border:1px solid var(--color-ink-200);border-radius:8px;font-size:.875rem;outline:none;background:#fff">
+    </div>
+    <select name="method" style="padding:.5rem .875rem;border:1px solid var(--color-ink-200);border-radius:8px;font-size:.875rem;background:#fff;color:var(--color-ink-700)">
+      <option value="">All Methods</option>
+      {% for val,label in method_choices %}
+      <option value="{{ val }}" {% if method_filter == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <select name="type" style="padding:.5rem .875rem;border:1px solid var(--color-ink-200);border-radius:8px;font-size:.875rem;background:#fff;color:var(--color-ink-700)">
+      <option value="">All Types</option>
+      {% for val,label in type_choices %}
+      <option value="{{ val }}" {% if type_filter == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="dbtn dbtn-primary">Filter</button>
+    {% if q or method_filter or type_filter %}<a href="{% url 'payments:list' %}" class="dbtn dbtn-ghost">Clear</a>{% endif %}
+  </form>
+</div>
+
+<div class="dcard dcard-flush">
+  <div class="dtable-wrap">
+    <table class="dtable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Job</th>
+          <th>Customer</th>
+          <th>Type</th>
+          <th>Method</th>
+          <th>Reference</th>
+          <th>Date</th>
+          <th style="text-align:right">Amount</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in payments %}
+        <tr class="dtable-row">
+          <td class="dtable-secondary">{{ p.payment_id }}</td>
+          <td><a href="{% url 'jobs:detail' pk=p.job.job_id %}" class="djob-id">{{ p.job.job_id }}</a></td>
+          <td><div class="dtable-primary">{{ p.job.customer.name }}</div></td>
+          <td><span class="dtable-tag">{{ p.get_payment_type_display }}</span></td>
+          <td><span class="dtable-tag">{{ p.get_payment_method_display }}</span></td>
+          <td class="dtable-secondary">{{ p.reference_number|default:"—" }}</td>
+          <td class="dtable-secondary">{{ p.payment_date|date:"M d, Y" }}</td>
+          <td style="text-align:right;font-weight:700;color:{% if p.payment_type == 'refund' %}var(--color-rose-600){% else %}var(--color-emerald-600){% endif %}">
+            {% if p.payment_type == 'refund' %}-{% endif %}${{ p.amount }}
+          </td>
+          <td>
+            <div style="display:flex;gap:.25rem">
+              <a href="{% url 'payments:edit' pk=p.payment_id %}" class="dtable-action"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
+              <a href="{% url 'payments:delete' pk=p.payment_id %}" class="dtable-action" style="color:var(--color-rose-600)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="9" style="text-align:center;padding:3rem;color:var(--color-ink-400)">No payments found. <a href="{% url 'payments:create' %}" style="color:var(--color-violet-500)">Record one →</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

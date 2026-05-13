@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}{% if action == 'Edit' %}Edit {{ customer.name }}{% else %}New Customer{% endif %} — WInki{% endblock %}
+{% block page_name %}{% if action == 'Edit' %}Edit Customer{% else %}New Customer{% endif %}{% endblock %}
+{% block content %}
+{% if messages %}{% for msg in messages %}<div class="walert walert-{{ msg.tags }}" style="margin-bottom:1rem">{{ msg }}</div>{% endfor %}{% endif %}
+
+<div class="dash-greeting">
+  <div>
+    <div class="dash-greeting-title">{% if action == 'Edit' %}Edit {{ customer.name }}{% else %}New Customer{% endif %}</div>
+    <div class="dash-greeting-sub">{% if action == 'Edit' %}Update customer information{% else %}Add a new customer to the system{% endif %}</div>
+  </div>
+  <a href="{% url 'customers:list' %}" class="dbtn dbtn-ghost">← Back</a>
+</div>
+
+<div style="max-width:640px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="dcard" style="margin-bottom:1.25rem">
+      <div class="dcard-head"><div class="dcard-title">Customer Information</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="wform-group" style="grid-column:1/-1">
+          <label class="wform-label">Full Name <span style="color:var(--color-rose-600)">*</span></label>
+          <input type="text" name="name" class="wform-input" required value="{{ customer.name|default:'' }}" placeholder="John Smith">
+        </div>
+        <div class="wform-group">
+          <label class="wform-label">Phone <span style="color:var(--color-rose-600)">*</span></label>
+          <input type="text" name="phone" class="wform-input" required value="{{ customer.phone|default:'' }}" placeholder="+1 555 000 0000">
+        </div>
+        <div class="wform-group">
+          <label class="wform-label">Email</label>
+          <input type="email" name="email" class="wform-input" value="{{ customer.email|default:'' }}" placeholder="john@example.com">
+        </div>
+        <div class="wform-group" style="grid-column:1/-1">
+          <label class="wform-label">Address</label>
+          <textarea name="address" class="wform-input" rows="2" placeholder="Street address">{{ customer.address|default:'' }}</textarea>
+        </div>
+        <div class="wform-group">
+          <label class="wform-label">City</label>
+          <input type="text" name="city" class="wform-input" value="{{ customer.city|default:'' }}" placeholder="London">
+        </div>
+        <div class="wform-group">
+          <label class="wform-label">Postal Code</label>
+          <input type="text" name="postal_code" class="wform-input" value="{{ customer.postal_code|default:'' }}" placeholder="SW1A 1AA">
+        </div>
+        <div class="wform-group" style="grid-column:1/-1">
+          <label class="wform-label">Notes</label>
+          <textarea name="notes" class="wform-input" rows="3" placeholder="Internal notes about this customer…">{{ customer.notes|default:'' }}</textarea>
+        </div>
+        <div class="wform-group">
+          <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.875rem;font-weight:500;color:var(--color-ink-700)">
+            <input type="checkbox" name="is_active" {% if not customer or customer.is_active %}checked{% endif %}
+                   style="width:16px;height:16px;accent-color:var(--color-violet-500)">
+            Active Customer
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:.75rem">
+      <button type="submit" class="dbtn dbtn-primary" style="padding:.625rem 1.5rem;font-size:.9rem">
+        {% if action == 'Edit' %}Update Customer{% else %}Create Customer{% endif %}
+      </button>
+      <a href="{% if customer %}{% url 'customers:detail' pk=customer.customer_id %}{% else %}{% url 'customers:list' %}{% endif %}" class="dbtn dbtn-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

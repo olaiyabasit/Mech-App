@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}{{ customer.name }} — WInki{% endblock %}
+{% block page_name %}Customer{% endblock %}
+{% block content %}
+{% if messages %}{% for msg in messages %}<div class="walert walert-{{ msg.tags }}" style="margin-bottom:1rem">{{ msg }}</div>{% endfor %}{% endif %}
+
+<div class="dash-greeting">
+  <div style="display:flex;align-items:center;gap:1rem">
+    <div class="dtop-avatar" style="width:52px;height:52px;font-size:1.25rem;flex-shrink:0">{{ customer.name|first|upper }}</div>
+    <div>
+      <div class="dash-greeting-title">{{ customer.name }}</div>
+      <div class="dash-greeting-sub">Customer #{{ customer.customer_id }} · Member since {{ customer.created_at|date:"M Y" }}
+        {% if not customer.is_active %}<span style="background:var(--color-ink-100);color:var(--color-ink-500);padding:.15rem .5rem;border-radius:10px;font-size:.75rem;font-weight:700;margin-left:.5rem">Inactive</span>{% endif %}
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+    <a href="{% url 'customers:edit' pk=customer.customer_id %}" class="dbtn dbtn-primary">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Edit
+    </a>
+    <a href="{% url 'jobs:create' %}?customer={{ customer.customer_id }}" class="dbtn dbtn-ghost">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      New Job
+    </a>
+    <a href="{% url 'customers:list' %}" class="dbtn dbtn-ghost">← Back</a>
+  </div>
+</div>
+
+<div class="dash-main-grid" style="grid-template-columns:1fr 300px">
+  <div style="display:flex;flex-direction:column;gap:1.25rem">
+
+    {# Jobs table #}
+    <div class="dcard dcard-flush">
+      <div class="dcard-head" style="padding:1.25rem 1.5rem 1rem">
+        <div><div class="dcard-title">Job History</div><div class="dcard-sub">{{ jobs.count }} total job{{ jobs.count|pluralize }}</div></div>
+        <a href="{% url 'jobs:create' %}" class="dbtn dbtn-primary">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          New Job
+        </a>
+      </div>
+      <div class="dtable-wrap">
+        <table class="dtable">
+          <thead><tr><th>Job ID</th><th>Type</th><th>Status</th><th>Created</th><th style="text-align:right">Cost</th><th style="text-align:right">Outstanding</th><th></th></tr></thead>
+          <tbody>
+            {% for job in jobs %}
+            <tr class="dtable-row">
+              <td><a href="{% url 'jobs:detail' pk=job.job_id %}" class="djob-id">{{ job.job_id }}</a></td>
+              <td><span class="dtable-tag">{{ job.get_job_type_display }}</span></td>
+              <td>
+                {% if job.status == 'pending' %}<span class="dstatus dstatus-pending">Pending</span>
+                {% elif job.status == 'in_progress' %}<span class="dstatus dstatus-progress">In Progress</span>
+                {% elif job.status == 'completed' %}<span class="dstatus dstatus-completed">Completed</span>
+                {% elif job.status == 'delivered' %}<span class="dstatus dstatus-delivered">Delivered</span>
+                {% elif job.status == 'cancelled' %}<span class="dstatus dstatus-cancelled">Cancelled</span>
+                {% endif %}
+              </td>
+              <td class="dtable-secondary">{{ job.created_date|date:"M d, Y" }}</td>
+              <td style="text-align:right;font-weight:700">${{ job.total_cost }}</td>
+              <td style="text-align:right">
+                {% if job.outstanding_balance > 0 %}<span style="color:var(--color-amber-600);font-weight:700">${{ job.outstanding_balance }}</span>
+                {% else %}<span style="color:var(--color-emerald-600)">Paid</span>{% endif %}
+              </td>
+              <td><a href="{% url 'jobs:detail' pk=job.job_id %}" class="dtable-action"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--color-ink-400)">No jobs yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  {# Right panel #}
+  <div style="display:flex;flex-direction:column;gap:1.25rem">
+
+    <div class="dcard">
+      <div class="dcard-title" style="margin-bottom:1rem">Contact Info</div>
+      {% if customer.phone %}<div class="wfield"><div class="wfield-lbl">Phone</div><a href="tel:{{ customer.phone }}" style="color:var(--color-violet-500);font-weight:600;font-size:.9rem">{{ customer.phone }}</a></div>{% endif %}
+      {% if customer.email %}<div class="wfield" style="margin-top:.75rem"><div class="wfield-lbl">Email</div><a href="mailto:{{ customer.email }}" style="color:var(--color-violet-500);font-size:.875rem">{{ customer.email }}</a></div>{% endif %}
+      {% if customer.address or customer.city %}
+      <div class="wfield" style="margin-top:.75rem"><div class="wfield-lbl">Address</div>
+        <div style="font-size:.875rem;color:var(--color-ink-700)">
+          {% if customer.address %}{{ customer.address }}<br>{% endif %}
+          {% if customer.city %}{{ customer.city }}{% endif %}{% if customer.postal_code %} {{ customer.postal_code }}{% endif %}
+        </div>
+      </div>
+      {% endif %}
+      {% if customer.notes %}
+      <div class="wfield" style="margin-top:.75rem"><div class="wfield-lbl">Notes</div><div style="font-size:.875rem;color:var(--color-ink-500)">{{ customer.notes }}</div></div>
+      {% endif %}
+    </div>
+
+    <div class="dcard">
+      <div class="dcard-title" style="margin-bottom:.875rem">Lifetime Stats</div>
+      <div class="dinsight-list">
+        <div class="dinsight-row"><span class="dinsight-lbl">Total Jobs</span><span class="dinsight-val">{{ customer.total_jobs }}</span></div>
+        <div class="dinsight-row"><span class="dinsight-lbl">Total Spent</span><span class="dinsight-val" style="color:var(--color-emerald-600)">${{ customer.total_spent|floatformat:0 }}</span></div>
+        <div class="dinsight-row"><span class="dinsight-lbl">Outstanding</span>
+          <span class="dinsight-val" style="color:{% if customer.outstanding_balance > 0 %}var(--color-amber-600){% else %}var(--color-emerald-600){% endif %}">
+            {% if customer.outstanding_balance > 0 %}${{ customer.outstanding_balance|floatformat:0 }}{% else %}None{% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dcard" style="border-color:var(--color-rose-100);background:var(--color-rose-50)">
+      <div style="font-size:.875rem;font-weight:700;color:var(--color-rose-700);margin-bottom:.75rem">Danger Zone</div>
+      <a href="{% url 'customers:delete' pk=customer.customer_id %}" class="dbtn" style="background:var(--color-rose-600);color:#fff;width:100%;justify-content:center">Delete Customer</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
