@@ -1,232 +1,168 @@
 {% extends 'base.html' %}
 
-{% block title %}Reports Dashboard - WInki Professional{% endblock %}
-
-{% block main_classes %}py-8{% endblock %}
+{% block title %}Reports & Analytics — WInki{% endblock %}
+{% block page_name %}Reports & Analytics{% endblock %}
 
 {% block content %}
-<!-- Reports Header -->
-<section class="py-16 bg-gradient-to-br from-off-white via-light-gray to-off-white overflow-hidden">
-    <div class="container-cinematic">
-        <div class="flex-between flex-wrap gap-6 mb-8">
-            <div class="animate-slide-in">
-                <div class="flex items-center space-x-4 mb-4">
-                    <div class="w-3 h-16 bg-gradient-to-b from-pure-black to-charcoal rounded-full"></div>
-                    <div>
-                        <h1 class="text-6xl xl:text-7xl font-black text-transparent bg-gradient-to-r from-pure-black via-graphite to-charcoal bg-clip-text leading-tight">
-                            Reports & Analytics
-                        </h1>
-                        <div class="h-1 w-32 bg-gradient-to-r from-pure-black via-charcoal to-transparent rounded-full mt-2"></div>
-                    </div>
-                </div>
-                <p class="text-xl text-pewter mt-4 font-medium">
-                    Export data and generate professional reports
-                </p>
-            </div>
-        </div>
+
+{# ── KPI Row ── #}
+<div class="kpi-row">
+
+  <div class="kpi-card kv">
+    <div class="kpi-top">
+      <div>
+        <div class="kpi-label">Total Jobs</div>
+        <div class="kpi-value">{{ total_jobs }}</div>
+        <div class="kpi-hint">All jobs in system</div>
+      </div>
+      <div class="kpi-icon ki-v">📋</div>
     </div>
-</section>
+  </div>
 
-<!-- Summary Statistics -->
-<section class="py-12">
-    <div class="container-cinematic">
-        <div class="grid-cinematic grid-auto-fit mb-16">
-            <div class="card-stats-enhanced animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="text-center">
-                    <h3 class="text-lg font-semibold text-pewter mb-4">Total Jobs</h3>
-                    <div class="text-4xl font-black text-pure-black mb-2">{{ total_jobs }}</div>
-                    <div class="text-sm text-slate">All jobs in system</div>
-                </div>
-            </div>
-
-            <div class="card-stats-enhanced animate-fade-in-up" style="animation-delay: 0.2s;">
-                <div class="text-center">
-                    <h3 class="text-lg font-semibold text-pewter mb-4">Total Revenue</h3>
-                    <div class="text-4xl font-black text-pure-black mb-2">${{ total_revenue|floatformat:0 }}</div>
-                    <div class="text-sm text-slate">Lifetime earnings</div>
-                </div>
-            </div>
-
-            <div class="card-stats-enhanced animate-fade-in-up" style="animation-delay: 0.3s;">
-                <div class="text-center">
-                    <h3 class="text-lg font-semibold text-pewter mb-4">Collection Rate</h3>
-                    <div class="text-4xl font-black text-pure-black mb-2">{{ collection_rate|floatformat:1 }}%</div>
-                    <div class="text-sm text-slate">Payment efficiency</div>
-                </div>
-            </div>
-
-            <div class="card-stats-enhanced animate-fade-in-up" style="animation-delay: 0.4s;">
-                <div class="text-center">
-                    <h3 class="text-lg font-semibold text-pewter mb-4">Outstanding</h3>
-                    <div class="text-4xl font-black text-pure-black mb-2">${{ outstanding_balance|floatformat:0 }}</div>
-                    <div class="text-sm text-slate">Pending collections</div>
-                </div>
-            </div>
-        </div>
+  <div class="kpi-card kg">
+    <div class="kpi-top">
+      <div>
+        <div class="kpi-label">Total Revenue</div>
+        <div class="kpi-value">${{ total_revenue|floatformat:0 }}</div>
+        <div class="kpi-hint">Lifetime earnings</div>
+      </div>
+      <div class="kpi-icon ki-g">💵</div>
     </div>
-</section>
+  </div>
 
-<!-- Export Options -->
-<section class="py-12">
-    <div class="container-cinematic">
-        <div class="grid lg:grid-cols-2 gap-12">
-            
-            <!-- PDF Reports -->
-            <div class="card-cinematic animate-fade-in-up" style="animation-delay: 0.5s;">
-                <h2 class="text-2xl font-bold mb-6 flex items-center">
-                    <span class="text-3xl mr-3">📄</span>
-                    PDF Reports
-                </h2>
-                
-                <div class="space-y-4">
-                    <a href="{% url 'reports:jobs_pdf' %}" 
-                       class="btn-cinematic-primary w-full flex items-center justify-between group">
-                        <span class="flex items-center space-x-3">
-                            <span>📋</span>
-                            <span>Jobs Report</span>
-                        </span>
-                        <span class="text-sm opacity-75 group-hover:opacity-100">PDF</span>
-                    </a>
-                    
-                    <a href="{% url 'reports:financial_pdf' %}" 
-                       class="btn-cinematic-primary w-full flex items-center justify-between group">
-                        <span class="flex items-center space-x-3">
-                            <span>💰</span>
-                            <span>Financial Report</span>
-                        </span>
-                        <span class="text-sm opacity-75 group-hover:opacity-100">PDF</span>
-                    </a>
-                </div>
-                
-                <div class="mt-6 p-4 bg-light-gray border border-medium-gray rounded-lg">
-                    <h4 class="font-semibold mb-2">PDF Features:</h4>
-                    <ul class="text-sm text-slate space-y-1">
-                        <li>• Professional formatting</li>
-                        <li>• Summary statistics</li>
-                        <li>• Detailed data tables</li>
-                        <li>• Print-ready format</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- CSV Exports -->
-            <div class="card-cinematic animate-fade-in-up" style="animation-delay: 0.6s;">
-                <h2 class="text-2xl font-bold mb-6 flex items-center">
-                    <span class="text-3xl mr-3">📊</span>
-                    CSV Exports
-                </h2>
-                
-                <div class="space-y-4">
-                    <a href="{% url 'reports:customers_csv' %}" 
-                       class="btn-cinematic-secondary w-full flex items-center justify-between group">
-                        <span class="flex items-center space-x-3">
-                            <span>👥</span>
-                            <span>Customers Export</span>
-                        </span>
-                        <span class="text-sm opacity-75 group-hover:opacity-100">CSV</span>
-                    </a>
-                    
-                    <div class="btn-cinematic-ghost w-full flex items-center justify-between opacity-50 cursor-not-allowed">
-                        <span class="flex items-center space-x-3">
-                            <span>📈</span>
-                            <span>Jobs Export</span>
-                        </span>
-                        <span class="text-sm">Coming Soon</span>
-                    </div>
-                </div>
-                
-                <div class="mt-6 p-4 bg-light-gray border border-medium-gray rounded-lg">
-                    <h4 class="font-semibold mb-2">CSV Features:</h4>
-                    <ul class="text-sm text-slate space-y-1">
-                        <li>• Excel-compatible format</li>
-                        <li>• All data fields included</li>
-                        <li>• Easy data analysis</li>
-                        <li>• Import into other systems</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+  <div class="kpi-card ks">
+    <div class="kpi-top">
+      <div>
+        <div class="kpi-label">Collection Rate</div>
+        <div class="kpi-value">{{ collection_rate|floatformat:1 }}%</div>
+        <div class="kpi-hint">Payment efficiency</div>
+      </div>
+      <div class="kpi-icon ki-s">📈</div>
     </div>
-</section>
+  </div>
 
-<!-- Quick Stats -->
-<section class="py-12 bg-gradient-to-b from-light-gray to-off-white">
-    <div class="container-cinematic">
-        <div class="card-cinematic animate-fade-in-up">
-            <h2 class="text-2xl font-bold mb-8 text-center">Quick Statistics</h2>
-            
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="text-center">
-                    <div class="text-3xl mb-2">👥</div>
-                    <div class="text-2xl font-bold text-pure-black">{{ total_customers }}</div>
-                    <div class="text-sm text-slate">Total Customers</div>
-                </div>
-                
-                <div class="text-center">
-                    <div class="text-3xl mb-2">💳</div>
-                    <div class="text-2xl font-bold text-pure-black">{{ total_payments }}</div>
-                    <div class="text-sm text-slate">Total Payments</div>
-                </div>
-                
-                <div class="text-center">
-                    <div class="text-3xl mb-2">💹</div>
-                    <div class="text-2xl font-bold text-pure-black">${{ total_collected|floatformat:0 }}</div>
-                    <div class="text-sm text-slate">Total Collected</div>
-                </div>
-            </div>
-            
-            <div class="mt-8 pt-8 border-t border-medium-gray text-center">
-                <p class="text-slate">
-                    <strong>Pro Tip:</strong> Use PDF reports for presentations and CSV exports for data analysis in Excel.
-                </p>
-            </div>
-        </div>
+  <div class="kpi-card ka">
+    <div class="kpi-top">
+      <div>
+        <div class="kpi-label">Outstanding</div>
+        <div class="kpi-value">${{ outstanding_balance|floatformat:0 }}</div>
+        <div class="kpi-hint">Pending collections</div>
+      </div>
+      <div class="kpi-icon ki-a">⏳</div>
     </div>
-</section>
-{% endblock %}
+  </div>
 
-{% block javascript %}
-{{ block.super }}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Add click tracking for export buttons
-    document.querySelectorAll('a[href*="pdf"], a[href*="csv"]').forEach(button => {
-        button.addEventListener('click', function(e) {
-            // Add ripple effect
-            const ripple = document.createElement('span');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-            
-            ripple.style.cssText = `
-                position: absolute;
-                width: ${size}px;
-                height: ${size}px;
-                left: ${x}px;
-                top: ${y}px;
-                background: rgba(255,255,255,0.3);
-                border-radius: 50%;
-                transform: scale(0);
-                animation: ripple 0.6s linear;
-                pointer-events: none;
-            `;
-            
-            this.appendChild(ripple);
-            
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
-            
-            // Show loading state
-            const originalText = this.innerHTML;
-            this.innerHTML = this.innerHTML.replace(/PDF|CSV/, 'Loading...');
-            
-            setTimeout(() => {
-                this.innerHTML = originalText;
-            }, 1000);
-        });
-    });
-});
-</script>
+</div>
+
+{# ── Export cards ── #}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem">
+
+  {# PDF Reports #}
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem">
+      <div style="width:44px;height:44px;border-radius:10px;background:var(--color-rose-100);display:flex;align-items:center;justify-content:center;font-size:1.25rem">📄</div>
+      <div>
+        <div style="font-weight:700;font-size:1rem;color:var(--color-ink-800)">PDF Reports</div>
+        <div style="font-size:.8125rem;color:var(--color-ink-400)">Professional formatted exports</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:.625rem;margin-bottom:1.25rem">
+      <a href="{% url 'reports:jobs_pdf' %}"
+         style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--color-ink-900);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem;transition:background .15s">
+        <span style="display:flex;align-items:center;gap:.5rem">
+          <span>📋</span> Jobs Report
+        </span>
+        <span style="font-size:.75rem;opacity:.7;background:rgba(255,255,255,.1);padding:.125rem .5rem;border-radius:4px">PDF</span>
+      </a>
+
+      <a href="{% url 'reports:financial_pdf' %}"
+         style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--color-ink-900);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem;transition:background .15s">
+        <span style="display:flex;align-items:center;gap:.5rem">
+          <span>💰</span> Financial Report
+        </span>
+        <span style="font-size:.75rem;opacity:.7;background:rgba(255,255,255,.1);padding:.125rem .5rem;border-radius:4px">PDF</span>
+      </a>
+    </div>
+
+    <div style="background:var(--color-ink-25);border:1px solid var(--color-ink-100);border-radius:8px;padding:1rem">
+      <div style="font-size:.8125rem;font-weight:600;color:var(--color-ink-700);margin-bottom:.5rem">Features</div>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.25rem">
+        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Professional formatting</li>
+        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Summary statistics</li>
+        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Detailed data tables</li>
+        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Print-ready format</li>
+      </ul>
+    </div>
+  </div>
+
+  {# CSV Exports #}
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem">
+      <div style="width:44px;height:44px;border-radius:10px;background:var(--color-emerald-100);display:flex;align-items:center;justify-content:center;font-size:1.25rem">📊</div>
+      <div>
+        <div style="font-weight:700;font-size:1rem;color:var(--color-ink-800)">CSV Exports</div>
+        <div style="font-size:.8125rem;color:var(--color-ink-400)">Excel-compatible data exports</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:.625rem;margin-bottom:1.25rem">
+      <a href="{% url 'reports:customers_csv' %}"
+         style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--color-emerald-600);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem;transition:background .15s">
+        <span style="display:flex;align-items:center;gap:.5rem">
+          <span>👥</span> Customers Export
+        </span>
+        <span style="font-size:.75rem;opacity:.7;background:rgba(255,255,255,.15);padding:.125rem .5rem;border-radius:4px">CSV</span>
+      </a>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--color-ink-50);border:1px solid var(--color-ink-100);color:var(--color-ink-300);border-radius:8px;font-size:.875rem;cursor:not-allowed">
+        <span style="display:flex;align-items:center;gap:.5rem">
+          <span>📈</span> Jobs Export
+        </span>
+        <span style="font-size:.75rem;background:var(--color-ink-100);padding:.125rem .5rem;border-radius:4px">Coming Soon</span>
+      </div>
+    </div>
+
+    <div style="background:var(--color-ink-25);border:1px solid var(--color-ink-100);border-radius:8px;padding:1rem">
+      <div style="font-size:.8125rem;font-weight:600;color:var(--color-ink-700);margin-bottom:.5rem">Features</div>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.25rem">
+        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Excel-compatible format</li>
+        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ All data fields included</li>
+        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Easy data analysis</li>
+        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Import into other systems</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+{# ── Quick stats summary ── #}
+<div class="card">
+  <div class="section-title" style="margin-bottom:1.25rem;text-align:center">Quick Statistics</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem">
+
+    <div style="text-align:center;padding:1.25rem;background:var(--color-ink-25);border:1px solid var(--color-ink-100);border-radius:10px">
+      <div style="font-size:1.5rem;margin-bottom:.5rem">👥</div>
+      <div style="font-size:1.5rem;font-weight:800;color:var(--color-ink-900)">{{ total_customers }}</div>
+      <div style="font-size:.8125rem;color:var(--color-ink-400);margin-top:.25rem">Total Customers</div>
+    </div>
+
+    <div style="text-align:center;padding:1.25rem;background:var(--color-violet-50);border:1px solid var(--color-violet-200);border-radius:10px">
+      <div style="font-size:1.5rem;margin-bottom:.5rem">💳</div>
+      <div style="font-size:1.5rem;font-weight:800;color:var(--color-violet-600)">{{ total_payments }}</div>
+      <div style="font-size:.8125rem;color:var(--color-violet-400);margin-top:.25rem">Total Payments</div>
+    </div>
+
+    <div style="text-align:center;padding:1.25rem;background:var(--color-emerald-50);border:1px solid var(--color-emerald-100);border-radius:10px">
+      <div style="font-size:1.5rem;margin-bottom:.5rem">💹</div>
+      <div style="font-size:1.5rem;font-weight:800;color:var(--color-emerald-600)">${{ total_collected|floatformat:0 }}</div>
+      <div style="font-size:.8125rem;color:var(--color-emerald-700);margin-top:.25rem">Total Collected</div>
+    </div>
+
+  </div>
+  <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--color-ink-100);text-align:center;font-size:.875rem;color:var(--color-ink-400)">
+    <strong style="color:var(--color-ink-700)">Pro Tip:</strong> Use PDF reports for presentations and CSV exports for data analysis in Excel.
+  </div>
+</div>
+
 {% endblock %}
