@@ -313,7 +313,7 @@
             {% for job in recent_jobs %}
             <tr class="dtable-row">
               <td>
-                <a href="{% url 'jobs:detail' pk={{ job.job_id }} %}" class="djob-id">{{ job.job_id }}</a>
+                <a href="{% url 'jobs:detail' pk=job.job_id %}" class="djob-id">{{ job.job_id }}</a>
               </td>
               <td>
                 <div class="dtable-primary">{{ job.customer.name }}</div>
@@ -346,7 +346,7 @@
                 {% endif %}
               </td>
               <td>
-                <a href="{% url 'jobs:detail' pk={{ job.job_id }} %}" class="dtable-action">
+                <a href="{% url 'jobs:detail' pk=job.job_id %}" class="dtable-action">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                     <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -393,7 +393,7 @@
             {% for p in recent_payments %}
             <tr class="dtable-row">
               <td>
-                <a href="{% url 'jobs:detail' pk={{ p.job.job_id }} %}" class="djob-id">{{ p.job.job_id }}</a>
+                <a href="{% url 'jobs:detail' pk=p.job.job_id %}" class="djob-id">{{ p.job.job_id }}</a>
               </td>
               <td class="dtable-primary">{{ p.job.customer.name }}</td>
               <td>
@@ -484,7 +484,7 @@
         <a href="{% url 'jobs:list' %}?status=in_progress" class="dcard-link" style="color:var(--color-rose-600)">View →</a>
       </div>
       {% for job in overdue_jobs %}
-      <a href="{% url 'jobs:detail' pk={{ job.job_id }} %}" class="doverdue-item">
+      <a href="{% url 'jobs:detail' pk=job.job_id %}" class="doverdue-item">
         <div>
           <div class="djob-id" style="font-size:.8rem">{{ job.job_id }}</div>
           <div style="font-size:.75rem;color:var(--color-ink-500)">{{ job.customer.name }}</div>
