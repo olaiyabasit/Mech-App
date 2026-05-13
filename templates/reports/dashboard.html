@@ -210,7 +210,7 @@
 <div class="dcard">
   <div class="dcard-head">
     <div class="dcard-title">Payment Methods</div>
-    <a href="/admin/payments/payment/" class="dcard-link">View all →</a>
+    <a href="{% url 'payments:list' %}" class="dcard-link">View all →</a>
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem">
     {% for pm in payment_method_stats %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Delete {{ customer.name }} — WInki{% endblock %}
+{% block page_name %}Delete Customer{% endblock %}
+{% block content %}
+<div style="max-width:520px;margin:3rem auto">
+  <div class="dcard" style="border-color:var(--color-rose-200);text-align:center;padding:2.5rem 2rem">
+    <div style="width:64px;height:64px;background:var(--color-rose-100);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-rose-600)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    </div>
+    <div style="font-size:1.25rem;font-weight:700;color:var(--color-ink-900);margin-bottom:.5rem">Delete {{ customer.name }}?</div>
+    <div style="color:var(--color-rose-600);font-size:.875rem;margin-bottom:2rem">
+      This will delete the customer and all their job history.<br>This action cannot be undone.
+    </div>
+    {% if customer.total_jobs > 0 %}
+    <div style="background:var(--color-amber-50);border:1px solid var(--color-amber-200);border-radius:8px;padding:.875rem;margin-bottom:1.5rem;font-size:.875rem;color:var(--color-amber-700)">
+      ⚠ This customer has {{ customer.total_jobs }} job{{ customer.total_jobs|pluralize }}. Jobs with payments cannot be deleted.
+    </div>
+    {% endif %}
+    <form method="post" style="display:flex;gap:.75rem;justify-content:center">
+      {% csrf_token %}
+      <button type="submit" class="dbtn" style="background:var(--color-rose-600);color:#fff;padding:.625rem 1.5rem">Yes, Delete</button>
+      <a href="{% url 'customers:detail' pk=customer.customer_id %}" class="dbtn dbtn-ghost">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

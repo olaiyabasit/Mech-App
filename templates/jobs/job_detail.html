@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% block title %}{{ job.job_id }} — WInki{% endblock %}
+{% block page_name %}{{ job.job_id }}{% endblock %}
+
+{% block content %}
+{% if messages %}{% for msg in messages %}
+<div class="walert walert-{{ msg.tags }}" style="margin-bottom:1rem">{{ msg }}</div>
+{% endfor %}{% endif %}
+
+{# Header #}
+<div class="dash-greeting">
+  <div>
+    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+      <div class="dash-greeting-title">{{ job.job_id }}</div>
+      {% if job.status == 'pending' %}<span class="dstatus dstatus-pending">Pending</span>
+      {% elif job.status == 'in_progress' %}<span class="dstatus dstatus-progress">In Progress</span>
+      {% elif job.status == 'completed' %}<span class="dstatus dstatus-completed">Completed</span>
+      {% elif job.status == 'delivered' %}<span class="dstatus dstatus-delivered">Delivered</span>
+      {% elif job.status == 'cancelled' %}<span class="dstatus dstatus-cancelled">Cancelled</span>
+      {% endif %}
+      {% if job.is_overdue %}<span class="dstatus dstatus-overdue">⚠ Overdue</span>{% endif %}
+    </div>
+    <div class="dash-greeting-sub">{{ job.get_job_type_display }} · {{ job.customer.name }} · Created {{ job.created_date|date:"M d, Y" }}</div>
+  </div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+    <a href="{% url 'jobs:edit' pk=job.job_id %}" class="dbtn dbtn-primary">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Edit
+    </a>
+    <a href="{% url 'payments:create' %}?job={{ job.job_id }}" class="dbtn dbtn-ghost">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      Record Payment
+    </a>
+    <a href="{% url 'jobs:list' %}" class="dbtn dbtn-ghost">← Back</a>
+  </div>
+</div>
+
+{# Quick status update #}
+<div class="dcard" style="margin-bottom:1.25rem;padding:.875rem 1.5rem">
+  <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+    <span style="font-size:.8125rem;font-weight:600;color:var(--color-ink-500)">Quick Status Update:</span>
+    {% for val,label in job.JOB_STATUS_CHOICES %}
+    <form method="post" action="{% url 'jobs:update_status' pk=job.job_id %}" style="display:inline">
+      {% csrf_token %}
+      <input type="hidden" name="status" value="{{ val }}">
+      <button type="submit"
+        style="padding:.3rem .875rem;border-radius:20px;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid {% if job.status == val %}var(--color-violet-500){% else %}var(--color-ink-200){% endif %};background:{% if job.status == val %}var(--color-violet-500){% else %}#fff{% endif %};color:{% if job.status == val %}#fff{% else %}var(--color-ink-500){% endif %}">
+        {{ label }}
+      </button>
+    </form>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="dash-main-grid" style="grid-template-columns:1fr 340px">
+
+  {# Left #}
+  <div style="display:flex;flex-direction:column;gap:1.25rem">
+
+    {# Job info card #}
+    <div class="dcard">
+      <div class="dcard-head"><div class="dcard-title">Job Details</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="wfield"><div class="wfield-lbl">Job Type</div><div class="wfield-val">{{ job.get_job_type_display }}</div></div>
+        <div class="wfield"><div class="wfield-lbl">Status</div><div class="wfield-val">{{ job.get_status_display }}</div></div>
+        <div class="wfield"><div class="wfield-lbl">Total Cost</div><div class="wfield-val" style="font-size:1.25rem;font-weight:800;color:var(--color-ink-900)">${{ job.total_cost }}</div></div>
+        <div class="wfield"><div class="wfield-lbl">Deposit</div><div class="wfield-val">${{ job.deposit_amount }}</div></div>
+        <div class="wfield"><div class="wfield-lbl">Total Paid</div><div class="wfield-val" style="color:var(--color-emerald-600);font-weight:700">${{ job.total_paid }}</div></div>
+        <div class="wfield"><div class="wfield-lbl">Outstanding</div>
+          <div class="wfield-val" style="font-weight:700;color:{% if job.outstanding_balance > 0 %}var(--color-amber-600){% else %}var(--color-emerald-600){% endif %}">
+            {% if job.outstanding_balance > 0 %}${{ job.outstanding_balance }}{% else %}Fully Paid{% endif %}
+          </div>
+        </div>
+        <div class="wfield"><div class="wfield-lbl">Created</div><div class="wfield-val">{{ job.created_date|date:"M d, Y" }}</div></div>
+        <div class="wfield"><div class="wfield-lbl">Expected Completion</div><div class="wfield-val">{{ job.expected_completion|date:"M d, Y"|default:"Not set" }}</div></div>
+        {% if job.completed_date %}
+        <div class="wfield"><div class="wfield-lbl">Completed</div><div class="wfield-val">{{ job.completed_date|date:"M d, Y" }}</div></div>
+        {% endif %}
+        {% if job.delivered_date %}
+        <div class="wfield"><div class="wfield-lbl">Delivered</div><div class="wfield-val">{{ job.delivered_date|date:"M d, Y" }}</div></div>
+        {% endif %}
+      </div>
+      {% if job.description %}
+      <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--color-ink-100)">
+        <div class="wfield-lbl" style="margin-bottom:.375rem">Description</div>
+        <div style="font-size:.9rem;color:var(--color-ink-700);line-height:1.6">{{ job.description }}</div>
+      </div>
+      {% endif %}
+      {% if job.internal_notes %}
+      <div style="margin-top:.875rem;padding:.75rem;background:var(--color-amber-50);border:1px solid var(--color-amber-100);border-radius:8px">
+        <div class="wfield-lbl" style="margin-bottom:.25rem;color:var(--color-amber-700)">Internal Notes</div>
+        <div style="font-size:.875rem;color:var(--color-amber-700)">{{ job.internal_notes }}</div>
+      </div>
+      {% endif %}
+    </div>
+
+    {# Vehicle details #}
+    {% if vehicle %}
+    <div class="dcard">
+      <div class="dcard-head"><div class="dcard-title">Vehicle Details</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="wfield"><div class="wfield-lbl">Make</div><div class="wfield-val">{{ vehicle.make }}</div></div>
+        <div class="wfield"><div class="wfield-lbl">Model</div><div class="wfield-val">{{ vehicle.model }}</div></div>
+        <div class="wfield"><div class="wfield-lbl">Year</div><div class="wfield-val">{{ vehicle.year }}</div></div>
+        <div class="wfield"><div class="wfield-lbl">Plate</div><div class="wfield-val" style="font-family:monospace;font-weight:700;font-size:1rem">{{ vehicle.plate_number }}</div></div>
+        {% if vehicle.color %}<div class="wfield"><div class="wfield-lbl">Color</div><div class="wfield-val">{{ vehicle.color }}</div></div>{% endif %}
+        {% if vehicle.mileage %}<div class="wfield"><div class="wfield-lbl">Mileage</div><div class="wfield-val">{{ vehicle.mileage|floatformat:0 }} km</div></div>{% endif %}
+        {% if vehicle.vin_number %}<div class="wfield"><div class="wfield-lbl">VIN</div><div class="wfield-val" style="font-family:monospace;font-size:.85rem">{{ vehicle.vin_number }}</div></div>{% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    {# Alloy details #}
+    {% if alloy %}
+    <div class="dcard">
+      <div class="dcard-head"><div class="dcard-title">Alloy Wheel Details</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="wfield"><div class="wfield-lbl">Wheel Size</div><div class="wfield-val">{{ alloy.wheel_size }}</div></div>
+        <div class="wfield"><div class="wfield-lbl">Quantity</div><div class="wfield-val">{{ alloy.quantity }} wheels</div></div>
+        {% if alloy.brand %}<div class="wfield"><div class="wfield-lbl">Brand</div><div class="wfield-val">{{ alloy.brand }}</div></div>{% endif %}
+        {% if alloy.model %}<div class="wfield"><div class="wfield-lbl">Model</div><div class="wfield-val">{{ alloy.model }}</div></div>{% endif %}
+        {% if alloy.finish_type %}<div class="wfield"><div class="wfield-lbl">Finish</div><div class="wfield-val">{{ alloy.finish_type }}</div></div>{% endif %}
+      </div>
+      {% if alloy.damage_description %}
+      <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--color-ink-100)">
+        <div class="wfield-lbl" style="margin-bottom:.375rem">Damage / Work Required</div>
+        <div style="font-size:.875rem;color:var(--color-ink-700)">{{ alloy.damage_description }}</div>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {# Services #}
+    {% if services %}
+    <div class="dcard dcard-flush">
+      <div class="dcard-head" style="padding:1.25rem 1.5rem 1rem">
+        <div class="dcard-title">Services ({{ services.count }})</div>
+      </div>
+      <div class="dtable-wrap">
+        <table class="dtable">
+          <thead><tr><th>Service</th><th>Status</th><th>Est. Hours</th><th style="text-align:right">Cost</th></tr></thead>
+          <tbody>
+            {% for svc in services %}
+            <tr class="dtable-row">
+              <td><div class="dtable-primary">{{ svc.service_name }}</div><div class="dtable-secondary">{{ svc.description }}</div></td>
+              <td><span class="dtable-tag">{{ svc.get_status_display }}</span></td>
+              <td class="dtable-secondary">{{ svc.estimated_hours|default:"—" }}</td>
+              <td style="text-align:right;font-weight:700">${{ svc.cost }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+    {# Payments #}
+    <div class="dcard dcard-flush">
+      <div class="dcard-head" style="padding:1.25rem 1.5rem 1rem">
+        <div class="dcard-title">Payments ({{ payments.count }})</div>
+        <a href="{% url 'payments:create' %}?job={{ job.job_id }}" class="dbtn dbtn-primary">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Add
+        </a>
+      </div>
+      {% if payments %}
+      <div class="dtable-wrap">
+        <table class="dtable">
+          <thead><tr><th>Date</th><th>Type</th><th>Method</th><th>Reference</th><th style="text-align:right">Amount</th><th></th></tr></thead>
+          <tbody>
+            {% for p in payments %}
+            <tr class="dtable-row">
+              <td class="dtable-secondary">{{ p.payment_date|date:"M d, Y" }}</td>
+              <td><span class="dtable-tag">{{ p.get_payment_type_display }}</span></td>
+              <td><span class="dtable-tag">{{ p.get_payment_method_display }}</span></td>
+              <td class="dtable-secondary">{{ p.reference_number|default:"—" }}</td>
+              <td style="text-align:right;font-weight:700;color:var(--color-emerald-600)">${{ p.amount }}</td>
+              <td>
+                <div style="display:flex;gap:.25rem">
+                  <a href="{% url 'payments:edit' pk=p.payment_id %}" class="dtable-action"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
+                  <a href="{% url 'payments:delete' pk=p.payment_id %}" class="dtable-action" style="color:var(--color-rose-600)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div style="padding:2rem;text-align:center;color:var(--color-ink-400);font-size:.875rem">No payments yet. <a href="{% url 'payments:create' %}?job={{ job.job_id }}" style="color:var(--color-violet-500)">Record first payment →</a></div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  {# Right sidebar #}
+  <div style="display:flex;flex-direction:column;gap:1.25rem">
+
+    {# Customer card #}
+    <div class="dcard">
+      <div class="dcard-head" style="margin-bottom:.875rem">
+        <div class="dcard-title">Customer</div>
+        <a href="{% url 'customers:detail' pk=job.customer.customer_id %}" class="dcard-link">View →</a>
+      </div>
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem">
+        <div class="dtop-avatar" style="width:44px;height:44px;font-size:1.1rem">{{ job.customer.name|first|upper }}</div>
+        <div>
+          <div style="font-weight:700;color:var(--color-ink-900)">{{ job.customer.name }}</div>
+          <div class="dtable-secondary">ID #{{ job.customer.customer_id }}</div>
+        </div>
+      </div>
+      {% if job.customer.phone %}
+      <div class="wfield"><div class="wfield-lbl">Phone</div>
+        <a href="tel:{{ job.customer.phone }}" style="color:var(--color-violet-500);font-weight:600;font-size:.875rem">{{ job.customer.phone }}</a>
+      </div>
+      {% endif %}
+      {% if job.customer.email %}
+      <div class="wfield" style="margin-top:.625rem"><div class="wfield-lbl">Email</div>
+        <a href="mailto:{{ job.customer.email }}" style="color:var(--color-violet-500);font-size:.875rem">{{ job.customer.email }}</a>
+      </div>
+      {% endif %}
+      {% if job.customer.address %}
+      <div class="wfield" style="margin-top:.625rem"><div class="wfield-lbl">Address</div>
+        <div style="font-size:.875rem;color:var(--color-ink-700)">{{ job.customer.address }}{% if job.customer.city %}, {{ job.customer.city }}{% endif %}</div>
+      </div>
+      {% endif %}
+    </div>
+
+    {# Financial summary #}
+    <div class="dcard">
+      <div class="dcard-title" style="margin-bottom:1rem">Financial Summary</div>
+      <div class="dinsight-list">
+        <div class="dinsight-row"><span class="dinsight-lbl">Total Cost</span><span class="dinsight-val">${{ job.total_cost }}</span></div>
+        <div class="dinsight-row"><span class="dinsight-lbl">Deposit</span><span class="dinsight-val">${{ job.deposit_amount }}</span></div>
+        <div class="dinsight-row"><span class="dinsight-lbl">Total Paid</span><span class="dinsight-val" style="color:var(--color-emerald-600)">${{ job.total_paid }}</span></div>
+        <div class="dinsight-row">
+          <span class="dinsight-lbl">Outstanding</span>
+          <span class="dinsight-val" style="color:{% if job.outstanding_balance > 0 %}var(--color-amber-600){% else %}var(--color-emerald-600){% endif %}">
+            {% if job.outstanding_balance > 0 %}${{ job.outstanding_balance }}{% else %}Paid ✓{% endif %}
+          </span>
+        </div>
+      </div>
+      {% if job.outstanding_balance > 0 %}
+      <div style="margin-top:1rem">
+        <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--color-ink-400);margin-bottom:.375rem">
+          <span>Collected</span><span>{{ job.total_paid|floatformat:0 }} / {{ job.total_cost|floatformat:0 }}</span>
+        </div>
+        <div class="dhealth-bar" style="height:8px">
+          {% if job.total_cost > 0 %}
+          <div class="dhealth-fill dhf-green" style="width:{% widthratio job.total_paid job.total_cost 100 %}%"></div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    {# QR Code #}
+    <div class="dcard" style="text-align:center">
+      <div class="dcard-title" style="margin-bottom:.875rem">QR Code</div>
+      <img src="{% url 'jobs:qr_image' job_id=job.job_id %}" alt="QR Code" style="width:140px;height:140px;border-radius:8px;margin:0 auto;display:block">
+      <div style="font-size:.75rem;color:var(--color-ink-400);margin-top:.75rem">Scan to track job status</div>
+      <a href="{% url 'jobs:qr_lookup' qr_code=job.qr_code %}" target="_blank" class="dbtn dbtn-ghost" style="margin-top:.75rem;width:100%;justify-content:center">Customer View</a>
+    </div>
+
+    {# Danger zone #}
+    <div class="dcard" style="border-color:var(--color-rose-100);background:var(--color-rose-50)">
+      <div style="font-size:.875rem;font-weight:700;color:var(--color-rose-700);margin-bottom:.75rem">Danger Zone</div>
+      <a href="{% url 'jobs:delete' pk=job.job_id %}" class="dbtn" style="background:var(--color-rose-600);color:#fff;width:100%;justify-content:center">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        Delete Job
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

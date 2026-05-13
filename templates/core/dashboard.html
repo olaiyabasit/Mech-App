@@ -17,7 +17,7 @@
   </div>
   <div style="display:flex;align-items:center;gap:.75rem">
     <div class="dash-greeting-date" id="liveClock">—</div>
-    <a href="/admin/jobs/job/add/" class="dbtn dbtn-primary" style="padding:.5rem 1.1rem;font-size:.875rem">
+    <a href="{% url 'jobs:create' %}" class="dbtn dbtn-primary" style="padding:.5rem 1.1rem;font-size:.875rem">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
       New Job
     </a>
@@ -245,32 +245,32 @@
           <div class="dcard-title">Job Pipeline</div>
           <div class="dcard-sub">Click any stage to filter jobs</div>
         </div>
-        <a href="/admin/jobs/job/" class="dcard-link">View all →</a>
+        <a href="{% url 'jobs:list' %}" class="dcard-link">View all →</a>
       </div>
 
       <div class="dpipeline">
-        <a href="/admin/jobs/job/?status=pending" class="dpipe-item dpipe-pending">
+        <a href="{% url 'jobs:list' %}?status=pending" class="dpipe-item dpipe-pending">
           <div class="dpipe-count">{{ job_stats.pending }}</div>
           <div class="dpipe-bar">
             <div class="dpipe-fill" style="width:{% if job_stats.total > 0 %}{% widthratio job_stats.pending job_stats.total 100 %}{% else %}0{% endif %}%"></div>
           </div>
           <div class="dpipe-label">Pending</div>
         </a>
-        <a href="/admin/jobs/job/?status=in_progress" class="dpipe-item dpipe-inprogress">
+        <a href="{% url 'jobs:list' %}?status=in_progress" class="dpipe-item dpipe-inprogress">
           <div class="dpipe-count">{{ job_stats.in_progress }}</div>
           <div class="dpipe-bar">
             <div class="dpipe-fill" style="width:{% if job_stats.total > 0 %}{% widthratio job_stats.in_progress job_stats.total 100 %}{% else %}0{% endif %}%"></div>
           </div>
           <div class="dpipe-label">In Progress</div>
         </a>
-        <a href="/admin/jobs/job/?status=completed" class="dpipe-item dpipe-completed">
+        <a href="{% url 'jobs:list' %}?status=completed" class="dpipe-item dpipe-completed">
           <div class="dpipe-count">{{ job_stats.completed }}</div>
           <div class="dpipe-bar">
             <div class="dpipe-fill" style="width:{% if job_stats.total > 0 %}{% widthratio job_stats.completed job_stats.total 100 %}{% else %}0{% endif %}%"></div>
           </div>
           <div class="dpipe-label">Completed</div>
         </a>
-        <a href="/admin/jobs/job/?status=delivered" class="dpipe-item dpipe-delivered">
+        <a href="{% url 'jobs:list' %}?status=delivered" class="dpipe-item dpipe-delivered">
           <div class="dpipe-count">{{ job_stats.delivered }}</div>
           <div class="dpipe-bar">
             <div class="dpipe-fill" style="width:{% if job_stats.total > 0 %}{% widthratio job_stats.delivered job_stats.total 100 %}{% else %}0{% endif %}%"></div>
@@ -289,11 +289,11 @@
           <div class="dcard-sub">Latest 10 projects</div>
         </div>
         <div style="display:flex;gap:.5rem">
-          <a href="/admin/jobs/job/add/" class="dbtn dbtn-primary">
+          <a href="{% url 'jobs:create' %}" class="dbtn dbtn-primary">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             New Job
           </a>
-          <a href="/admin/jobs/job/" class="dbtn dbtn-ghost">View All</a>
+          <a href="{% url 'jobs:list' %}" class="dbtn dbtn-ghost">View All</a>
         </div>
       </div>
       <div class="dtable-wrap">
@@ -313,7 +313,7 @@
             {% for job in recent_jobs %}
             <tr class="dtable-row">
               <td>
-                <a href="/admin/jobs/job/{{ job.job_id }}/change/" class="djob-id">{{ job.job_id }}</a>
+                <a href="{% url 'jobs:detail' pk={{ job.job_id }} %}" class="djob-id">{{ job.job_id }}</a>
               </td>
               <td>
                 <div class="dtable-primary">{{ job.customer.name }}</div>
@@ -346,7 +346,7 @@
                 {% endif %}
               </td>
               <td>
-                <a href="/admin/jobs/job/{{ job.job_id }}/change/" class="dtable-action">
+                <a href="{% url 'jobs:detail' pk={{ job.job_id }} %}" class="dtable-action">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                     <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -370,11 +370,11 @@
           <div class="dcard-sub">Latest 8 transactions</div>
         </div>
         <div style="display:flex;gap:.5rem">
-          <a href="/admin/payments/payment/add/" class="dbtn dbtn-primary">
+          <a href="{% url 'payments:create' %}" class="dbtn dbtn-primary">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             Record
           </a>
-          <a href="/admin/payments/payment/" class="dbtn dbtn-ghost">View All</a>
+          <a href="{% url 'payments:list' %}" class="dbtn dbtn-ghost">View All</a>
         </div>
       </div>
       <div class="dtable-wrap">
@@ -393,7 +393,7 @@
             {% for p in recent_payments %}
             <tr class="dtable-row">
               <td>
-                <a href="/admin/jobs/job/{{ p.job.job_id }}/change/" class="djob-id">{{ p.job.job_id }}</a>
+                <a href="{% url 'jobs:detail' pk={{ p.job.job_id }} %}" class="djob-id">{{ p.job.job_id }}</a>
               </td>
               <td class="dtable-primary">{{ p.job.customer.name }}</td>
               <td>
@@ -423,7 +423,7 @@
     {# QUICK ACTIONS #}
     <div class="dcard">
       <div class="dcard-title" style="margin-bottom:1rem">Quick Actions</div>
-      <a href="/admin/jobs/job/add/" class="dqa-primary">
+      <a href="{% url 'jobs:create' %}" class="dqa-primary">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
         Create New Job
       </a>
@@ -434,28 +434,28 @@
         </svg>
         Add Customer
       </a>
-      <a href="/admin/payments/payment/add/" class="dqa-secondary">
+      <a href="{% url 'payments:create' %}" class="dqa-secondary">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
         </svg>
         Record Payment
       </a>
       <div class="dqa-grid">
-        <a href="/admin/jobs/job/" class="dqa-item" style="--qa-c:var(--color-violet-500);--qa-bg:var(--color-violet-50)">
+        <a href="{% url 'jobs:list' %}" class="dqa-item" style="--qa-c:var(--color-violet-500);--qa-bg:var(--color-violet-50)">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
             <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
             <rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/>
           </svg>
           <span>Jobs</span>
         </a>
-        <a href="/admin/customers/customer/" class="dqa-item" style="--qa-c:var(--color-emerald-600);--qa-bg:var(--color-emerald-50)">
+        <a href="{% url 'customers:list' %}" class="dqa-item" style="--qa-c:var(--color-emerald-600);--qa-bg:var(--color-emerald-50)">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
             <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
             <circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
           </svg>
           <span>Customers</span>
         </a>
-        <a href="/admin/payments/payment/" class="dqa-item" style="--qa-c:var(--color-amber-600);--qa-bg:var(--color-amber-50)">
+        <a href="{% url 'payments:list' %}" class="dqa-item" style="--qa-c:var(--color-amber-600);--qa-bg:var(--color-amber-50)">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
             <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
           </svg>
@@ -481,10 +481,10 @@
           </svg>
           Overdue ({{ job_stats.overdue }})
         </div>
-        <a href="/admin/jobs/job/?status=in_progress" class="dcard-link" style="color:var(--color-rose-600)">View →</a>
+        <a href="{% url 'jobs:list' %}?status=in_progress" class="dcard-link" style="color:var(--color-rose-600)">View →</a>
       </div>
       {% for job in overdue_jobs %}
-      <a href="/admin/jobs/job/{{ job.job_id }}/change/" class="doverdue-item">
+      <a href="{% url 'jobs:detail' pk={{ job.job_id }} %}" class="doverdue-item">
         <div>
           <div class="djob-id" style="font-size:.8rem">{{ job.job_id }}</div>
           <div style="font-size:.75rem;color:var(--color-ink-500)">{{ job.customer.name }}</div>
@@ -505,10 +505,10 @@
     <div class="dcard">
       <div class="dcard-head" style="margin-bottom:.875rem">
         <div class="dcard-title">Top Customers</div>
-        <a href="/admin/customers/customer/" class="dcard-link">View all →</a>
+        <a href="{% url 'customers:list' %}" class="dcard-link">View all →</a>
       </div>
       {% for c in top_customers %}
-      <a href="/admin/customers/customer/{{ c.customer_id }}/change/" class="dtop-customer">
+      <a href="/admin/customers/customer/{{ c.customer_id }} %}" class="dtop-customer">
         <div class="dtop-avatar">{{ c.name|first|upper }}</div>
         <div style="flex:1;min-width:0">
           <div class="dtable-primary" style="font-size:.875rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.name }}</div>

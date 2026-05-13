@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Customers — WInki{% endblock %}
+{% block page_name %}Customers{% endblock %}
+{% block content %}
+{% if messages %}{% for msg in messages %}<div class="walert walert-{{ msg.tags }}" style="margin-bottom:1rem">{{ msg }}</div>{% endfor %}{% endif %}
+
+<div class="dash-greeting">
+  <div>
+    <div class="dash-greeting-title">Customers</div>
+    <div class="dash-greeting-sub">{{ total }} customer{{ total|pluralize }} in database</div>
+  </div>
+  <a href="{% url 'customers:create' %}" class="dbtn dbtn-primary" style="padding:.5rem 1.25rem;font-size:.875rem">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+    New Customer
+  </a>
+</div>
+
+<div class="dcard" style="margin-bottom:1.25rem;padding:1rem 1.5rem">
+  <form method="get" style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+    <div style="flex:1;min-width:200px;position:relative">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--color-ink-400)"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" name="q" value="{{ q }}" placeholder="Search name, phone, email…"
+             style="width:100%;padding:.5rem .75rem .5rem 2.25rem;border:1px solid var(--color-ink-200);border-radius:8px;font-size:.875rem;outline:none;background:#fff">
+    </div>
+    <select name="active" style="padding:.5rem .875rem;border:1px solid var(--color-ink-200);border-radius:8px;font-size:.875rem;background:#fff;color:var(--color-ink-700)">
+      <option value="">All Customers</option>
+      <option value="1" {% if active_filter == '1' %}selected{% endif %}>Active Only</option>
+      <option value="0" {% if active_filter == '0' %}selected{% endif %}>Inactive Only</option>
+    </select>
+    <button type="submit" class="dbtn dbtn-primary">Filter</button>
+    {% if q or active_filter %}<a href="{% url 'customers:list' %}" class="dbtn dbtn-ghost">Clear</a>{% endif %}
+  </form>
+</div>
+
+<div class="dcard dcard-flush">
+  <div class="dtable-wrap">
+    <table class="dtable">
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>City</th>
+          <th style="text-align:center">Jobs</th>
+          <th style="text-align:right">Total Value</th>
+          <th>Status</th>
+          <th>Since</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in customers %}
+        <tr class="dtable-row">
+          <td>
+            <div style="display:flex;align-items:center;gap:.625rem">
+              <div class="dtop-avatar" style="width:32px;height:32px;font-size:.8rem">{{ c.name|first|upper }}</div>
+              <div>
+                <a href="{% url 'customers:detail' pk=c.customer_id %}" class="dtable-primary" style="text-decoration:none;color:var(--color-ink-800)">{{ c.name }}</a>
+                <div class="dtable-secondary">#{{ c.customer_id }}</div>
+              </div>
+            </div>
+          </td>
+          <td><a href="tel:{{ c.phone }}" style="color:var(--color-violet-500);font-weight:600;font-size:.875rem">{{ c.phone }}</a></td>
+          <td class="dtable-secondary">{{ c.email|default:"—" }}</td>
+          <td class="dtable-secondary">{{ c.city|default:"—" }}</td>
+          <td style="text-align:center"><span class="dtable-tag">{{ c.job_count|default:0 }}</span></td>
+          <td style="text-align:right;font-weight:700">${{ c.total_value|floatformat:0|default:"0" }}</td>
+          <td>
+            {% if c.is_active %}
+            <span style="background:var(--color-emerald-100);color:var(--color-emerald-700);padding:.2rem .6rem;border-radius:20px;font-size:.7rem;font-weight:700">Active</span>
+            {% else %}
+            <span style="background:var(--color-ink-100);color:var(--color-ink-500);padding:.2rem .6rem;border-radius:20px;font-size:.7rem;font-weight:700">Inactive</span>
+            {% endif %}
+          </td>
+          <td class="dtable-secondary">{{ c.created_at|date:"M d, Y" }}</td>
+          <td>
+            <div style="display:flex;gap:.25rem">
+              <a href="{% url 'customers:detail' pk=c.customer_id %}" class="dtable-action" title="View"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+              <a href="{% url 'customers:edit' pk=c.customer_id %}" class="dtable-action" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
+              <a href="{% url 'customers:delete' pk=c.customer_id %}" class="dtable-action" title="Delete" style="color:var(--color-rose-600)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="9" style="text-align:center;padding:3rem;color:var(--color-ink-400)">No customers found. <a href="{% url 'customers:create' %}" style="color:var(--color-violet-500)">Add one →</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
