@@ -5,247 +5,521 @@
 
 {% block content %}
 
-{# ── KPI Row ── #}
-<div class="kpi-row">
+{# ════════════════════════════════════════════
+   GREETING BAR
+   ════════════════════════════════════════════ #}
+<div class="dash-greeting">
+  <div>
+    <div class="dash-greeting-title">Good day, {{ user.first_name|default:user.username }} 👋</div>
+    <div class="dash-greeting-sub">Here's what's happening with your business today.</div>
+  </div>
+  <div class="dash-greeting-date" id="liveClock">—</div>
+</div>
 
-  <div class="kpi-card kv">
-    <div class="kpi-top">
-      <div>
-        <div class="kpi-label">Total Jobs</div>
-        <div class="kpi-value">{{ job_stats.total }}</div>
-        <div class="kpi-hint">All time records</div>
+{# ════════════════════════════════════════════
+   KPI ROW
+   ════════════════════════════════════════════ #}
+<div class="dash-kpi-grid">
+
+  <div class="dkpi dkpi-violet">
+    <div class="dkpi-inner">
+      <div class="dkpi-left">
+        <div class="dkpi-label">Total Revenue</div>
+        <div class="dkpi-value">${{ total_revenue|floatformat:0 }}</div>
+        <div class="dkpi-sub">
+          {% if revenue_growth >= 0 %}
+            <span class="dkpi-badge dkpi-badge-up">↑ {{ revenue_growth }}%</span>
+          {% else %}
+            <span class="dkpi-badge dkpi-badge-down">↓ {{ revenue_growth|cut:"-" }}%</span>
+          {% endif %}
+          vs last month
+        </div>
       </div>
-      <div class="kpi-icon ki-v">📊</div>
+      <div class="dkpi-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+        </svg>
+      </div>
     </div>
   </div>
 
-  <div class="kpi-card kg">
-    <div class="kpi-top">
-      <div>
-        <div class="kpi-label">Total Revenue</div>
-        <div class="kpi-value">${{ total_revenue|floatformat:0 }}</div>
-        <div class="kpi-hint">Completed projects</div>
+  <div class="dkpi dkpi-emerald">
+    <div class="dkpi-inner">
+      <div class="dkpi-left">
+        <div class="dkpi-label">This Month</div>
+        <div class="dkpi-value">${{ monthly_revenue|floatformat:0 }}</div>
+        <div class="dkpi-sub">{{ job_stats.this_month }} jobs delivered</div>
       </div>
-      <div class="kpi-icon ki-g">💵</div>
+      <div class="dkpi-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/>
+        </svg>
+      </div>
     </div>
   </div>
 
-  <div class="kpi-card ka">
-    <div class="kpi-top">
-      <div>
-        <div class="kpi-label">Outstanding</div>
-        <div class="kpi-value">${{ outstanding_balance|floatformat:0 }}</div>
-        <div class="kpi-hint">Pending payments</div>
+  <div class="dkpi dkpi-amber">
+    <div class="dkpi-inner">
+      <div class="dkpi-left">
+        <div class="dkpi-label">Outstanding</div>
+        <div class="dkpi-value">${{ outstanding_balance|floatformat:0 }}</div>
+        <div class="dkpi-sub">{{ collection_rate }}% collected</div>
       </div>
-      <div class="kpi-icon ki-a">⏳</div>
+      <div class="dkpi-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+        </svg>
+      </div>
     </div>
   </div>
 
-  <div class="kpi-card ks">
-    <div class="kpi-top">
-      <div>
-        <div class="kpi-label">Today's Jobs</div>
-        <div class="kpi-value">{{ job_stats.today }}</div>
-        <div class="kpi-hint">New today</div>
+  <div class="dkpi dkpi-sky">
+    <div class="dkpi-inner">
+      <div class="dkpi-left">
+        <div class="dkpi-label">Active Jobs</div>
+        <div class="dkpi-value">{{ job_stats.in_progress }}</div>
+        <div class="dkpi-sub">{{ job_stats.pending }} pending</div>
       </div>
-      <div class="kpi-icon ki-s">🚀</div>
+      <div class="dkpi-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/>
+        </svg>
+      </div>
     </div>
   </div>
 
 </div>
-{# end kpi-row #}
 
-{# ── Two-column layout ── #}
-<div style="display:grid;grid-template-columns:1fr 320px;gap:1.25rem;align-items:start">
+{# ════════════════════════════════════════════
+   SECONDARY METRICS ROW
+   ════════════════════════════════════════════ #}
+<div class="dash-metrics-row">
+  <div class="dmetric">
+    <div class="dmetric-val">{{ job_stats.total }}</div>
+    <div class="dmetric-lbl">Total Jobs</div>
+  </div>
+  <div class="dmetric-div"></div>
+  <div class="dmetric">
+    <div class="dmetric-val">{{ total_customers }}</div>
+    <div class="dmetric-lbl">Customers</div>
+  </div>
+  <div class="dmetric-div"></div>
+  <div class="dmetric">
+    <div class="dmetric-val">{{ job_stats.delivered }}</div>
+    <div class="dmetric-lbl">Delivered</div>
+  </div>
+  <div class="dmetric-div"></div>
+  <div class="dmetric">
+    <div class="dmetric-val {% if job_stats.overdue > 0 %}dmetric-warn{% endif %}"
+         style="{% if job_stats.overdue > 0 %}color:var(--color-amber-600){% endif %}">
+      {{ job_stats.overdue }}
+    </div>
+    <div class="dmetric-lbl">Overdue</div>
+  </div>
+  <div class="dmetric-div"></div>
+  <div class="dmetric">
+    <div class="dmetric-val">${{ average_job_value|floatformat:0 }}</div>
+    <div class="dmetric-lbl">Avg Job Value</div>
+  </div>
+  <div class="dmetric-div"></div>
+  <div class="dmetric">
+    <div class="dmetric-val">${{ payments_today|floatformat:0 }}</div>
+    <div class="dmetric-lbl">Paid Today</div>
+  </div>
+  <div class="dmetric-div"></div>
+  <div class="dmetric">
+    <div class="dmetric-val">{{ new_customers_month }}</div>
+    <div class="dmetric-lbl">New Customers</div>
+  </div>
+  <div class="dmetric-div"></div>
+  <div class="dmetric">
+    <div class="dmetric-val">{{ job_stats.today }}</div>
+    <div class="dmetric-lbl">Jobs Today</div>
+  </div>
+</div>
 
-  {# Left column #}
-  <div style="display:flex;flex-direction:column;gap:1.25rem">
+{# ════════════════════════════════════════════
+   MAIN GRID
+   ════════════════════════════════════════════ #}
+<div class="dash-main-grid">
 
-    {# Pipeline #}
-    <div class="card">
-      <div class="section-header">
-        <span class="section-title">Job Pipeline</span>
-        <a href="/admin/jobs/job/"
-           style="font-size:.8125rem;font-weight:600;color:var(--color-violet-500);text-decoration:none">View all →</a>
+  {# ─────────────── LEFT COLUMN ─────────────── #}
+  <div class="dash-col-main">
+
+    {# PIPELINE CARD #}
+    <div class="dcard">
+      <div class="dcard-head">
+        <div>
+          <div class="dcard-title">Job Pipeline</div>
+          <div class="dcard-sub">Current workflow status</div>
+        </div>
+        <a href="/admin/jobs/job/" class="dcard-link">View all jobs →</a>
       </div>
-      <div class="pipeline-row">
-        <div class="pipeline-pill pp-pending">
-          <span class="pp-count">{{ job_stats.pending }}</span>
-          <span class="pp-label">Pending</span>
-        </div>
-        <div class="pipeline-pill pp-progress">
-          <span class="pp-count">{{ job_stats.in_progress }}</span>
-          <span class="pp-label">In Progress</span>
-        </div>
-        <div class="pipeline-pill pp-completed">
-          <span class="pp-count">{{ job_stats.completed }}</span>
-          <span class="pp-label">Completed</span>
-        </div>
-        <div class="pipeline-pill pp-delivered">
-          <span class="pp-count">{{ job_stats.delivered }}</span>
-          <span class="pp-label">Delivered</span>
+
+      <div class="dpipeline">
+        <a href="/admin/jobs/job/?status=pending" class="dpipe-item dpipe-pending">
+          <div class="dpipe-count">{{ job_stats.pending }}</div>
+          <div class="dpipe-bar">
+            <div class="dpipe-fill" style="width:{% widthratio job_stats.pending job_stats.total 100 %}%"></div>
+          </div>
+          <div class="dpipe-label">Pending</div>
+        </a>
+        <a href="/admin/jobs/job/?status=in_progress" class="dpipe-item dpipe-inprogress">
+          <div class="dpipe-count">{{ job_stats.in_progress }}</div>
+          <div class="dpipe-bar">
+            <div class="dpipe-fill" style="width:{% widthratio job_stats.in_progress job_stats.total 100 %}%"></div>
+          </div>
+          <div class="dpipe-label">In Progress</div>
+        </a>
+        <a href="/admin/jobs/job/?status=completed" class="dpipe-item dpipe-completed">
+          <div class="dpipe-count">{{ job_stats.completed }}</div>
+          <div class="dpipe-bar">
+            <div class="dpipe-fill" style="width:{% widthratio job_stats.completed job_stats.total 100 %}%"></div>
+          </div>
+          <div class="dpipe-label">Completed</div>
+        </a>
+        <a href="/admin/jobs/job/?status=delivered" class="dpipe-item dpipe-delivered">
+          <div class="dpipe-count">{{ job_stats.delivered }}</div>
+          <div class="dpipe-bar">
+            <div class="dpipe-fill" style="width:{% widthratio job_stats.delivered job_stats.total 100 %}%"></div>
+          </div>
+          <div class="dpipe-label">Delivered</div>
+        </a>
+      </div>
+
+      {# 7-day sparkline #}
+      <div class="dspark-wrap">
+        <div class="dspark-label">Jobs created — last 7 days</div>
+        <div class="dspark">
+          {% for day in daily_jobs %}
+          <div class="dspark-col">
+            <div class="dspark-bar-wrap">
+              <div class="dspark-bar" style="height:{% if day.count > 0 %}{% widthratio day.count 10 100 %}{% else %}4{% endif %}%"
+                   title="{{ day.count }} jobs on {{ day.date }}"></div>
+            </div>
+            <div class="dspark-day">{{ day.date }}</div>
+          </div>
+          {% endfor %}
         </div>
       </div>
     </div>
 
-    {# Recent Jobs #}
+    {# RECENT JOBS TABLE #}
     {% if recent_jobs %}
-    <div class="card" style="padding:0;overflow:hidden">
-      <div class="section-header" style="padding:1.25rem 1.5rem 1rem">
-        <span class="section-title">Recent Projects</span>
+    <div class="dcard dcard-flush">
+      <div class="dcard-head" style="padding:1.25rem 1.5rem 1rem">
+        <div>
+          <div class="dcard-title">Recent Jobs</div>
+          <div class="dcard-sub">Latest 10 projects</div>
+        </div>
         <div style="display:flex;gap:.5rem">
-          <a href="/admin/jobs/job/add/" class="btn btn-primary" style="font-size:.75rem;padding:.375rem .75rem">+ New Job</a>
-          <a href="/admin/jobs/job/" class="btn btn-secondary" style="font-size:.75rem;padding:.375rem .75rem">View All</a>
+          <a href="/admin/jobs/job/add/" class="dbtn dbtn-primary">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            New Job
+          </a>
+          <a href="/admin/jobs/job/" class="dbtn dbtn-ghost">View All</a>
         </div>
       </div>
-      <table class="table-cinematic">
-        <thead>
-          <tr>
-            <th>Project ID</th>
-            <th>Customer</th>
-            <th>Service</th>
-            <th>Status</th>
-            <th style="text-align:right">Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for job in recent_jobs %}
-          <tr>
-            <td>
-              <a href="/admin/jobs/job/{{ job.job_id }}/change/"
-                 style="font-weight:600;color:var(--color-violet-500);text-decoration:none">
-                {{ job.job_id }}
-              </a>
-            </td>
-            <td>
-              <div style="font-weight:500;font-size:.875rem">{{ job.customer.name }}</div>
-              <div style="font-size:.75rem;color:var(--color-ink-300)">{{ job.customer.phone|default:"—" }}</div>
-            </td>
-            <td>
-              <span style="font-size:.75rem;font-weight:600;color:var(--color-ink-500)">{{ job.get_job_type_display }}</span>
-            </td>
-            <td>
-              {% if job.status == 'pending' %}
-                <span class="status-badge status-pending">{{ job.get_status_display }}</span>
-              {% elif job.status == 'in_progress' %}
-                <span class="status-badge status-progress">{{ job.get_status_display }}</span>
-              {% elif job.status == 'completed' %}
-                <span class="status-badge status-completed">{{ job.get_status_display }}</span>
-              {% elif job.status == 'delivered' %}
-                <span class="status-badge status-delivered">{{ job.get_status_display }}</span>
-              {% endif %}
-            </td>
-            <td style="text-align:right">
-              <div style="font-weight:700">${{ job.total_cost }}</div>
-              {% if job.outstanding_balance > 0 %}
-                <div style="font-size:.75rem;color:var(--color-amber-600)">${{ job.outstanding_balance }} due</div>
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="dtable-wrap">
+        <table class="dtable">
+          <thead>
+            <tr>
+              <th>Job ID</th>
+              <th>Customer</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th style="text-align:right">Value</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for job in recent_jobs %}
+            <tr class="dtable-row">
+              <td>
+                <a href="/admin/jobs/job/{{ job.job_id }}/change/" class="djob-id">{{ job.job_id }}</a>
+              </td>
+              <td>
+                <div class="dtable-primary">{{ job.customer.name }}</div>
+                <div class="dtable-secondary">{{ job.customer.phone|default:"—" }}</div>
+              </td>
+              <td>
+                <span class="dtable-tag">{{ job.get_job_type_display }}</span>
+              </td>
+              <td>
+                {% if job.status == 'pending' %}
+                  <span class="dstatus dstatus-pending">Pending</span>
+                {% elif job.status == 'in_progress' %}
+                  <span class="dstatus dstatus-progress">In Progress</span>
+                {% elif job.status == 'completed' %}
+                  <span class="dstatus dstatus-completed">Completed</span>
+                {% elif job.status == 'delivered' %}
+                  <span class="dstatus dstatus-delivered">Delivered</span>
+                {% elif job.status == 'cancelled' %}
+                  <span class="dstatus dstatus-cancelled">Cancelled</span>
+                {% endif %}
+                {% if job.is_overdue %}
+                  <span class="dstatus dstatus-overdue">Overdue</span>
+                {% endif %}
+              </td>
+              <td class="dtable-secondary">{{ job.created_date|date:"M d" }}</td>
+              <td style="text-align:right">
+                <div class="dtable-primary" style="font-weight:700">${{ job.total_cost }}</div>
+                {% if job.outstanding_balance > 0 %}
+                  <div style="font-size:.7rem;color:var(--color-amber-600)">${{ job.outstanding_balance }} due</div>
+                {% endif %}
+              </td>
+              <td>
+                <a href="/admin/jobs/job/{{ job.job_id }}/change/" class="dtable-action">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
     {% endif %}
 
-    {# Recent Payments #}
+    {# RECENT PAYMENTS TABLE #}
     {% if recent_payments %}
-    <div class="card" style="padding:0;overflow:hidden">
-      <div class="section-header" style="padding:1.25rem 1.5rem 1rem">
-        <span class="section-title">Recent Payments</span>
-        <a href="/admin/payments/payment/" class="btn btn-secondary" style="font-size:.75rem;padding:.375rem .75rem">View All</a>
+    <div class="dcard dcard-flush">
+      <div class="dcard-head" style="padding:1.25rem 1.5rem 1rem">
+        <div>
+          <div class="dcard-title">Recent Payments</div>
+          <div class="dcard-sub">Latest 8 transactions</div>
+        </div>
+        <a href="/admin/payments/payment/" class="dbtn dbtn-ghost">View All</a>
       </div>
-      <table class="table-cinematic">
-        <thead>
-          <tr>
-            <th>Job</th>
-            <th>Customer</th>
-            <th>Date</th>
-            <th style="text-align:right">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for payment in recent_payments %}
-          <tr>
-            <td>
-              <a href="/admin/jobs/job/{{ payment.job.job_id }}/change/"
-                 style="font-weight:600;color:var(--color-violet-500);text-decoration:none">
-                {{ payment.job.job_id }}
-              </a>
-            </td>
-            <td style="font-size:.875rem">{{ payment.job.customer.name }}</td>
-            <td style="font-size:.875rem;color:var(--color-ink-400)">{{ payment.payment_date|date:"M d, Y" }}</td>
-            <td style="text-align:right;font-weight:700;color:var(--color-emerald-600)">${{ payment.amount }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="dtable-wrap">
+        <table class="dtable">
+          <thead>
+            <tr>
+              <th>Job</th>
+              <th>Customer</th>
+              <th>Method</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th style="text-align:right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in recent_payments %}
+            <tr class="dtable-row">
+              <td>
+                <a href="/admin/jobs/job/{{ p.job.job_id }}/change/" class="djob-id">{{ p.job.job_id }}</a>
+              </td>
+              <td class="dtable-primary">{{ p.job.customer.name }}</td>
+              <td>
+                <span class="dtable-tag">{{ p.get_payment_method_display }}</span>
+              </td>
+              <td>
+                <span class="dtable-tag dtable-tag-{{ p.payment_type }}">{{ p.get_payment_type_display }}</span>
+              </td>
+              <td class="dtable-secondary">{{ p.payment_date|date:"M d, Y" }}</td>
+              <td style="text-align:right">
+                <span style="font-weight:700;color:var(--color-emerald-600)">${{ p.amount }}</span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
     {% endif %}
 
   </div>
   {# end left column #}
 
-  {# Right sidebar #}
-  <div style="display:flex;flex-direction:column;gap:1.25rem">
+  {# ─────────────── RIGHT SIDEBAR ─────────────── #}
+  <div class="dash-col-side">
 
-    {# Quick Actions #}
-    <div class="card">
-      <div class="section-title" style="margin-bottom:1rem">Quick Actions</div>
-      <a href="/admin/jobs/job/add/"
-         style="display:flex;align-items:center;gap:.625rem;padding:.75rem 1rem;background:var(--color-violet-500);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem;margin-bottom:.75rem;transition:background .15s">
-        <span>➕</span> Create New Job
+    {# QUICK ACTIONS #}
+    <div class="dcard">
+      <div class="dcard-title" style="margin-bottom:1rem">Quick Actions</div>
+      <a href="/admin/jobs/job/add/" class="dqa-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Create New Job
       </a>
-      <a href="/admin/customers/customer/add/"
-         style="display:flex;align-items:center;gap:.625rem;padding:.75rem 1rem;background:var(--color-ink-50);color:var(--color-ink-700);border:1px solid var(--color-ink-200);border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem;margin-bottom:.875rem;transition:background .15s">
-        <span>👤</span> Add Customer
+      <a href="/admin/customers/customer/add/" class="dqa-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Add Customer
       </a>
-      <div class="qa-grid">
-        <a href="/admin/jobs/job/" class="qa-item qa-violet">
-          <span class="qa-icon">📋</span>
-          <span class="qa-label">Jobs</span>
+      <a href="/admin/payments/payment/add/" class="dqa-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
+        </svg>
+        Record Payment
+      </a>
+      <div class="dqa-grid">
+        <a href="/admin/jobs/job/" class="dqa-item" style="--qa-c:var(--color-violet-500);--qa-bg:var(--color-violet-50)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+            <rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/>
+          </svg>
+          <span>Jobs</span>
         </a>
-        <a href="/admin/customers/customer/" class="qa-item qa-emerald">
-          <span class="qa-icon">👥</span>
-          <span class="qa-label">Customers</span>
+        <a href="/admin/customers/customer/" class="dqa-item" style="--qa-c:var(--color-emerald-600);--qa-bg:var(--color-emerald-50)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+          </svg>
+          <span>Customers</span>
         </a>
-        <a href="/admin/payments/payment/" class="qa-item qa-amber">
-          <span class="qa-icon">💰</span>
-          <span class="qa-label">Payments</span>
+        <a href="/admin/payments/payment/" class="dqa-item" style="--qa-c:var(--color-amber-600);--qa-bg:var(--color-amber-50)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
+          </svg>
+          <span>Payments</span>
         </a>
-        <a href="/admin/" class="qa-item qa-sky">
-          <span class="qa-icon">⚙️</span>
-          <span class="qa-label">Admin</span>
+        <a href="{% url 'reports:dashboard' %}" class="dqa-item" style="--qa-c:var(--color-sky-600);--qa-bg:var(--color-sky-50)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/>
+          </svg>
+          <span>Reports</span>
         </a>
       </div>
     </div>
 
-    {# Business Insights #}
-    <div class="card">
-      <div class="section-title" style="margin-bottom:.875rem">Business Insights</div>
-      <div class="insight-row">
-        <span class="insight-label">Avg Job Value</span>
-        <span class="insight-value">${{ average_job_value|floatformat:0 }}</span>
+    {# OVERDUE JOBS ALERT #}
+    {% if overdue_jobs %}
+    <div class="dcard dcard-alert">
+      <div class="dcard-head" style="margin-bottom:.75rem">
+        <div class="dcard-title" style="color:var(--color-amber-700)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:-2px;margin-right:4px">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          Overdue Jobs ({{ job_stats.overdue }})
+        </div>
       </div>
-      <div class="insight-row">
-        <span class="insight-label">Collection Rate</span>
-        <span class="insight-value">{% widthratio total_revenue total_revenue|add:outstanding_balance 100 %}%</span>
+      {% for job in overdue_jobs %}
+      <a href="/admin/jobs/job/{{ job.job_id }}/change/" class="doverdue-item">
+        <div>
+          <div class="djob-id" style="font-size:.8rem">{{ job.job_id }}</div>
+          <div style="font-size:.75rem;color:var(--color-ink-500)">{{ job.customer.name }}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:.75rem;font-weight:600;color:var(--color-amber-700)">
+            Due {{ job.expected_completion|date:"M d" }}
+          </div>
+          <div style="font-size:.7rem;color:var(--color-ink-400)">{{ job.get_status_display }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {# TOP CUSTOMERS #}
+    {% if top_customers %}
+    <div class="dcard">
+      <div class="dcard-head" style="margin-bottom:.875rem">
+        <div class="dcard-title">Top Customers</div>
+        <a href="/admin/customers/customer/" class="dcard-link">View all →</a>
       </div>
-      <div class="insight-row">
-        <span class="insight-label">Active Projects</span>
-        <span class="insight-value">{{ job_stats.in_progress }}</span>
+      {% for c in top_customers %}
+      <a href="/admin/customers/customer/{{ c.customer_id }}/change/" class="dtop-customer">
+        <div class="dtop-avatar">{{ c.name|first|upper }}</div>
+        <div style="flex:1;min-width:0">
+          <div class="dtable-primary" style="font-size:.875rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.name }}</div>
+          <div class="dtable-secondary">{{ c.job_count }} job{{ c.job_count|pluralize }}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-weight:700;font-size:.875rem">${{ c.total_value|floatformat:0 }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {# BUSINESS HEALTH SUMMARY #}
+    <div class="dcard">
+      <div class="dcard-title" style="margin-bottom:.875rem">Business Health</div>
+
+      {# Collection rate progress bar #}
+      <div style="margin-bottom:1rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.375rem">
+          <span style="font-size:.8rem;color:var(--color-ink-500);font-weight:500">Collection Rate</span>
+          <span style="font-size:.875rem;font-weight:700;color:{% if collection_rate >= 80 %}var(--color-emerald-600){% elif collection_rate >= 60 %}var(--color-amber-600){% else %}var(--color-rose-600){% endif %}">{{ collection_rate }}%</span>
+        </div>
+        <div class="dhealth-bar">
+          <div class="dhealth-fill {% if collection_rate >= 80 %}dhf-green{% elif collection_rate >= 60 %}dhf-amber{% else %}dhf-red{% endif %}"
+               style="width:{{ collection_rate }}%"></div>
+        </div>
       </div>
-      <div class="insight-row">
-        <span class="insight-label">Last Updated</span>
-        <span style="font-size:.8125rem;color:var(--color-ink-400)" id="liveClock">{{ current_time|date:"M d, Y H:i" }}</span>
+
+      {# Job completion rate #}
+      {% if job_stats.total > 0 %}
+      <div style="margin-bottom:1rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.375rem">
+          <span style="font-size:.8rem;color:var(--color-ink-500);font-weight:500">Jobs Delivered</span>
+          <span style="font-size:.875rem;font-weight:700">{% widthratio job_stats.delivered job_stats.total 100 %}%</span>
+        </div>
+        <div class="dhealth-bar">
+          <div class="dhealth-fill dhf-violet" style="width:{% widthratio job_stats.delivered job_stats.total 100 %}%"></div>
+        </div>
       </div>
+      {% endif %}
+
+      <div class="dinsight-list">
+        <div class="dinsight-row">
+          <span class="dinsight-lbl">Avg Job Value</span>
+          <span class="dinsight-val">${{ average_job_value|floatformat:0 }}</span>
+        </div>
+        <div class="dinsight-row">
+          <span class="dinsight-lbl">Paid This Month</span>
+          <span class="dinsight-val">${{ payments_this_month|floatformat:0 }}</span>
+        </div>
+        <div class="dinsight-row">
+          <span class="dinsight-lbl">Total Customers</span>
+          <span class="dinsight-val">{{ total_customers }}</span>
+        </div>
+        <div class="dinsight-row">
+          <span class="dinsight-lbl">New This Month</span>
+          <span class="dinsight-val">{{ new_customers_month }}</span>
+        </div>
+      </div>
+    </div>
+
+    {# REPORTS SHORTCUT #}
+    <div class="dcard dcard-reports">
+      <div class="dcard-title" style="margin-bottom:.625rem">Reports &amp; Exports</div>
+      <div style="font-size:.8125rem;color:var(--color-ink-400);margin-bottom:1rem">Download financial and job reports</div>
+      <a href="{% url 'reports:jobs_pdf' %}" class="dqa-secondary" style="margin-bottom:.5rem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+        </svg>
+        Jobs Report (PDF)
+      </a>
+      <a href="{% url 'reports:financial_pdf' %}" class="dqa-secondary" style="margin-bottom:.5rem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+        </svg>
+        Financial Report (PDF)
+      </a>
+      <a href="{% url 'reports:customers_csv' %}" class="dqa-secondary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Customers (CSV)
+      </a>
     </div>
 
   </div>
   {# end right sidebar #}
 
 </div>
-{# end two-column grid #}
+{# end main grid #}
 
 {% endblock %}
 
@@ -258,7 +532,7 @@
     const el = document.getElementById('liveClock');
     if (!el) return;
     const d = new Date();
-    const opts = { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' };
+    const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' };
     el.textContent = d.toLocaleDateString('en-US', opts);
   }
   tick();
