@@ -7,9 +7,62 @@
   <title>{% block title %}WInki — Vehicle & Alloy Wheel Refurbishment{% endblock %}</title>
   <meta name="description" content="Professional vehicle and alloy wheel refurbishment business management system">
   {% tailwind_css %}
-</head>
+  <style>
+    /* ── Page loader bar ── */
+    #page-loader {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 3px; z-index: 9999;
+      background: linear-gradient(90deg, #5e56ec, #7b74f0, #5e56ec);
+      background-size: 200% 100%;
+      animation: loaderSlide .6s ease-out forwards, loaderShimmer 1s linear infinite;
+      transform-origin: left;
+    }
+    @keyframes loaderSlide {
+      from { transform: scaleX(0); opacity: 1; }
+      to   { transform: scaleX(1); opacity: 1; }
+    }
+    @keyframes loaderShimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    #page-loader.done {
+      animation: loaderFade .3s ease forwards;
+    }
+    @keyframes loaderFade {
+      to { opacity: 0; }
+    }
+    /* ── Page fade in ── */
+    .page-body { animation: pageFadeIn .35s ease both; }
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    /* ── Toast notifications ── */
+    #toast-container {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      display: flex; flex-direction: column; gap: .5rem;
+      z-index: 9998; pointer-events: none;
+    }
+    .toast {
+      display: flex; align-items: center; gap: .625rem;
+      padding: .75rem 1rem; border-radius: 10px;
+      font-size: .875rem; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,.15);
+      pointer-events: auto;
+      animation: toastIn .3s ease both;
+      max-width: 320px;
+    }
+    .toast.out { animation: toastOut .3s ease forwards; }
+    .toast-success { background: #fff; border-left: 4px solid #10a065; color: #0d1117; }
+    .toast-error   { background: #fff; border-left: 4px solid #cf2020; color: #0d1117; }
+    .toast-info    { background: #fff; border-left: 4px solid #5e56ec; color: #0d1117; }
+    @keyframes toastIn  { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+    @keyframes toastOut { to   { opacity:0; transform: translateX(20px); } }
+  </style></head>
 
 <body>
+<div id="page-loader"></div>
+<div id="toast-container"></div>
 
 {% if user.is_authenticated %}
 
@@ -211,6 +264,33 @@
 
 {% block javascript %}
 <script>
+// ── Page loader ──
+window.addEventListener('load', function() {
+  const loader = document.getElementById('page-loader');
+  if (loader) { loader.classList.add('done'); setTimeout(() => loader.remove(), 400); }
+});
+
+// Show loader on navigation
+document.addEventListener('click', function(e) {
+  const a = e.target.closest('a');
+  if (a && a.href && !a.href.startsWith('#') && !a.target && a.hostname === location.hostname) {
+    const loader = document.getElementById('page-loader');
+    if (loader) { loader.style.animation = 'none'; loader.style.transform = 'scaleX(0)'; loader.style.opacity = '1'; requestAnimationFrame(() => { loader.style.animation = ''; }); }
+  }
+});
+
+// ── Toast system ──
+window.showToast = function(message, type = 'info', duration = 4000) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `<span style="font-size:1rem;font-weight:700">${icons[type]||'ℹ'}</span><span>${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.classList.add('out'); setTimeout(() => toast.remove(), 300); }, duration);
+};
+
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('mobOverlay');

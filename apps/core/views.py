@@ -60,6 +60,9 @@ def dashboard(request):
     outstanding_balance = sum(job.outstanding_balance for job in Job.objects.filter(
         status__in=['pending', 'in_progress', 'completed']))
     
+    total_jobs_count = job_stats['total']
+    average_job_value = round(total_revenue / total_jobs_count, 2) if total_jobs_count else 0
+    
     # Recent activity
     recent_jobs = Job.objects.select_related('customer').order_by('-created_date')[:10]
     recent_payments = Payment.objects.select_related('job__customer').order_by('-payment_date')[:5]
@@ -69,9 +72,11 @@ def dashboard(request):
         'total_revenue': total_revenue,
         'monthly_revenue': monthly_revenue,
         'outstanding_balance': outstanding_balance,
+        'average_job_value': average_job_value,
         'recent_jobs': recent_jobs,
         'recent_payments': recent_payments,
         'total_customers': Customer.objects.count(),
+        'current_time': timezone.now(),
     }
     
     return render(request, 'core/dashboard.html', context)
