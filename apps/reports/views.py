@@ -208,17 +208,84 @@ def financial_report_pdf(request):
     return response
 
 
+def jobs_export_csv(request):
+    """Export all jobs to CSV"""
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="winki_jobs.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow([
+        'Job ID', 'Customer', 'Phone', 'Job Type', 'Status',
+        'Total Cost', 'Deposit', 'Outstanding', 'Description',
+        'Created Date', 'Expected Completion', 'Delivered Date',
+    ])
+
+    jobs = Job.objects.select_related('customer').order_by('-created_date')
+    for job in jobs:
+        writer.writerow([
+            job.job_id,
+            job.customer.name,
+            job.customer.phone or '',
+            job.get_job_type_display(),
+            job.get_status_display(),
+            f"{job.total_cost:.2f}",
+            f"{job.deposit_amount:.2f}",
+            f"{job.outstanding_balance:.2f}",
+            job.description,
+            job.created_date.strftime('%Y-%m-%d') if job.created_date else '',
+            job.expected_completion.strftime('%Y-%m-%d') if job.expected_completion else '',
+            job.delivered_date.strftime('%Y-%m-%d') if job.delivered_date else '',
+        ])
+
+    return response
+
+
 def reports_dashboard(request):
     """Reports dashboard view"""
-    # Calculate key metrics for dashboard
+    from django.db.models import Sum, Count
+    from datetime import timedelta
+
+    today = timezone.now().date()
+    this_month_start = timezone.now().replace(day=1).date()
+
     total_jobs = Job.objects.count()
     total_customers = Customer.objects.count()
     total_payments = Payment.objects.count()
-    
-    total_revenue = sum(job.total_cost for job in Job.objects.all())
+
+    total_revenue = sum(job.total_cost for job in Job.objects.filter(status='delivered'))
     total_collected = sum(payment.amount for payment in Payment.objects.all())
-    outstanding_balance = total_revenue - total_collected
-    
+    outstanding_balance = sum(
+        job.outstanding_balance for job in Job.objects.filter(
+            status__in=['pending', 'in_progress', 'completed']
+        ).prefetch_related('payments')
+    )
+
+    # Job status breakdown
+    job_status_stats = list(Job.objects.values('status').annotate(count=Count('job_id')))
+    job_type_stats = list(Job.objects.values('job_type').annotate(count=Count('job_id')))
+
+    # Payment method breakdown
+    payment_method_stats = list(Payment.objects.values('payment_method').annotate(
+        count=Count('id'), total=Sum('amount')
+    ))
+
+    # Monthly revenue — last 6 months
+    monthly_data = []
+    for i in range(5, -1, -1):
+        month_date = today.replace(day=1)
+        for _ in range(i):
+            month_date = (month_date - timedelta(days=1)).replace(day=1)
+        month_end = (month_date.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
+        rev = Job.objects.filter(
+            status='delivered',
+            delivered_date__date__gte=month_date,
+            delivered_date__date__lte=month_end,
+        ).aggregate(total=Sum('total_cost'))['total'] or 0
+        monthly_data.append({
+            'month': month_date.strftime('%b'),
+            'revenue': float(rev),
+        })
+
     context = {
         'total_jobs': total_jobs,
         'total_customers': total_customers,
@@ -226,7 +293,11 @@ def reports_dashboard(request):
         'total_revenue': total_revenue,
         'total_collected': total_collected,
         'outstanding_balance': outstanding_balance,
-        'collection_rate': (total_collected / total_revenue * 100) if total_revenue > 0 else 0,
+        'collection_rate': (float(total_collected) / float(total_revenue) * 100) if total_revenue > 0 else 0,
+        'job_status_stats': job_status_stats,
+        'job_type_stats': job_type_stats,
+        'payment_method_stats': payment_method_stats,
+        'monthly_data': monthly_data,
     }
-    
+
     return render(request, 'reports/dashboard.html', context)

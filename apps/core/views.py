@@ -140,6 +140,7 @@ def dashboard(request):
         'recent_payments': recent_payments,
         'top_customers': top_customers,
         'overdue_jobs': overdue_jobs,
+        'overdue_count': job_stats['overdue'],
         'total_customers': Customer.objects.count(),
         'new_customers_month': Customer.objects.filter(created_at__date__gte=this_month_start).count(),
         'job_type_stats': job_type_stats,
