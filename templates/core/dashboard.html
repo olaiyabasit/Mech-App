@@ -10,8 +10,8 @@
    ════════════════════════════════════════════ #}
 <div class="dash-greeting">
   <div>
-    <div class="dash-greeting-title">
-      Good {% now "G" as current_hour %}{% if current_hour < 12 %}morning{% elif current_hour < 17 %}afternoon{% else %}evening{% endif %}, {{ user.first_name|default:user.username }} 👋
+    <div class="dash-greeting-title" id="greetingTitle">
+      Hello, {{ user.first_name|default:user.username }} 👋
     </div>
     <div class="dash-greeting-sub">Here's your business overview for today.</div>
   </div>
@@ -624,14 +624,20 @@
 {{ block.super }}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-// Live clock
+// Live clock + greeting
 (function() {
   function tick() {
-    const el = document.getElementById('liveClock');
-    if (!el) return;
+    const clock = document.getElementById('liveClock');
+    const greeting = document.getElementById('greetingTitle');
     const d = new Date();
-    const opts = { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' };
-    el.textContent = d.toLocaleDateString('en-US', opts);
+    const h = d.getHours();
+    const name = greeting ? greeting.textContent.split(', ')[1] : '';
+    const period = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+    if (greeting && name) greeting.textContent = `Good ${period}, ${name}`;
+    if (clock) {
+      const opts = { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' };
+      clock.textContent = d.toLocaleDateString('en-US', opts);
+    }
   }
   tick();
   setInterval(tick, 60000);

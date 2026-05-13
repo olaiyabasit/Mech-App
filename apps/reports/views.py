@@ -266,7 +266,7 @@ def reports_dashboard(request):
 
     # Payment method breakdown
     payment_method_stats = list(Payment.objects.values('payment_method').annotate(
-        count=Count('id'), total=Sum('amount')
+        count=Count('payment_id'), total=Sum('amount')
     ))
 
     # Monthly revenue — last 6 months
