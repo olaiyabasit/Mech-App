@@ -6,163 +6,321 @@
 {% block content %}
 
 {# ── KPI Row ── #}
-<div class="kpi-row">
+<div class="dash-kpi-grid" style="margin-bottom:1.5rem">
 
-  <div class="kpi-card kv">
-    <div class="kpi-top">
-      <div>
-        <div class="kpi-label">Total Jobs</div>
-        <div class="kpi-value">{{ total_jobs }}</div>
-        <div class="kpi-hint">All jobs in system</div>
+  <div class="dkpi dkpi-violet">
+    <div class="dkpi-inner">
+      <div class="dkpi-left">
+        <div class="dkpi-label">Total Jobs</div>
+        <div class="dkpi-value">{{ total_jobs }}</div>
+        <div class="dkpi-sub">All time records</div>
       </div>
-      <div class="kpi-icon ki-v">📋</div>
+      <div class="dkpi-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/>
+        </svg>
+      </div>
     </div>
   </div>
 
-  <div class="kpi-card kg">
-    <div class="kpi-top">
-      <div>
-        <div class="kpi-label">Total Revenue</div>
-        <div class="kpi-value">${{ total_revenue|floatformat:0 }}</div>
-        <div class="kpi-hint">Lifetime earnings</div>
+  <div class="dkpi dkpi-emerald">
+    <div class="dkpi-inner">
+      <div class="dkpi-left">
+        <div class="dkpi-label">Total Revenue</div>
+        <div class="dkpi-value">${{ total_revenue|floatformat:0 }}</div>
+        <div class="dkpi-sub">Lifetime earnings</div>
       </div>
-      <div class="kpi-icon ki-g">💵</div>
+      <div class="dkpi-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+        </svg>
+      </div>
     </div>
   </div>
 
-  <div class="kpi-card ks">
-    <div class="kpi-top">
-      <div>
-        <div class="kpi-label">Collection Rate</div>
-        <div class="kpi-value">{{ collection_rate|floatformat:1 }}%</div>
-        <div class="kpi-hint">Payment efficiency</div>
+  <div class="dkpi dkpi-sky">
+    <div class="dkpi-inner">
+      <div class="dkpi-left">
+        <div class="dkpi-label">Collection Rate</div>
+        <div class="dkpi-value">{{ collection_rate|floatformat:1 }}%</div>
+        <div class="dkpi-sub">Payment efficiency</div>
       </div>
-      <div class="kpi-icon ki-s">📈</div>
+      <div class="dkpi-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/>
+        </svg>
+      </div>
     </div>
   </div>
 
-  <div class="kpi-card ka">
-    <div class="kpi-top">
-      <div>
-        <div class="kpi-label">Outstanding</div>
-        <div class="kpi-value">${{ outstanding_balance|floatformat:0 }}</div>
-        <div class="kpi-hint">Pending collections</div>
+  <div class="dkpi dkpi-amber">
+    <div class="dkpi-inner">
+      <div class="dkpi-left">
+        <div class="dkpi-label">Outstanding</div>
+        <div class="dkpi-value">${{ outstanding_balance|floatformat:0 }}</div>
+        <div class="dkpi-sub">Pending collections</div>
       </div>
-      <div class="kpi-icon ki-a">⏳</div>
+      <div class="dkpi-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+        </svg>
+      </div>
     </div>
   </div>
 
 </div>
 
-{# ── Export cards ── #}
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem">
+{# ── Charts Row ── #}
+<div style="display:grid;grid-template-columns:1.6fr 1fr;gap:1.25rem;margin-bottom:1.25rem">
 
-  {# PDF Reports #}
-  <div class="card">
-    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem">
-      <div style="width:44px;height:44px;border-radius:10px;background:var(--color-rose-100);display:flex;align-items:center;justify-content:center;font-size:1.25rem">📄</div>
+  {# Monthly Revenue Bar Chart #}
+  <div class="dcard">
+    <div class="dcard-head">
       <div>
-        <div style="font-weight:700;font-size:1rem;color:var(--color-ink-800)">PDF Reports</div>
-        <div style="font-size:.8125rem;color:var(--color-ink-400)">Professional formatted exports</div>
+        <div class="dcard-title">Monthly Revenue</div>
+        <div class="dcard-sub">Last 6 months — delivered jobs</div>
       </div>
     </div>
+    <div style="position:relative;height:200px">
+      <canvas id="monthlyRevenueChart"></canvas>
+    </div>
+  </div>
 
-    <div style="display:flex;flex-direction:column;gap:.625rem;margin-bottom:1.25rem">
+  {# Job Type + Payment Method ── #}
+  <div class="dcard">
+    <div class="dcard-head">
+      <div>
+        <div class="dcard-title">Job Type Mix</div>
+        <div class="dcard-sub">Service distribution</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:1.5rem">
+      <div style="position:relative;width:120px;height:120px;flex-shrink:0">
+        <canvas id="jobTypeReportChart"></canvas>
+      </div>
+      <div class="dchart-legend-list">
+        {% for j in job_type_stats %}
+        <div class="dchart-legend-item">
+          <span class="dchart-dot" style="background:{% if forloop.counter == 1 %}#5e56ec{% elif forloop.counter == 2 %}#10a065{% else %}#0475bb{% endif %}"></span>
+          <span class="dchart-legend-lbl">{{ j.job_type|title }}</span>
+          <span class="dchart-legend-val">{{ j.count }}</span>
+        </div>
+        {% empty %}
+        <div style="font-size:.8rem;color:var(--color-ink-400)">No data yet</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{# ── Quick stats + Exports ── #}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem">
+
+  {# Quick Stats #}
+  <div class="dcard">
+    <div class="dcard-title" style="margin-bottom:1.25rem">Overview Statistics</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+
+      <div style="padding:1rem;background:var(--color-violet-50);border:1px solid var(--color-violet-200);border-radius:10px;text-align:center">
+        <div style="font-size:1.5rem;font-weight:800;color:var(--color-violet-600)">{{ total_customers }}</div>
+        <div style="font-size:.8125rem;color:var(--color-violet-400);margin-top:.25rem;font-weight:600">Customers</div>
+      </div>
+
+      <div style="padding:1rem;background:var(--color-emerald-50);border:1px solid var(--color-emerald-100);border-radius:10px;text-align:center">
+        <div style="font-size:1.5rem;font-weight:800;color:var(--color-emerald-600)">${{ total_collected|floatformat:0 }}</div>
+        <div style="font-size:.8125rem;color:var(--color-emerald-700);margin-top:.25rem;font-weight:600">Total Collected</div>
+      </div>
+
+      <div style="padding:1rem;background:var(--color-sky-50);border:1px solid var(--color-sky-100);border-radius:10px;text-align:center">
+        <div style="font-size:1.5rem;font-weight:800;color:var(--color-sky-600)">{{ total_payments }}</div>
+        <div style="font-size:.8125rem;color:var(--color-sky-700);margin-top:.25rem;font-weight:600">Transactions</div>
+      </div>
+
+      <div style="padding:1rem;background:var(--color-amber-50);border:1px solid var(--color-amber-100);border-radius:10px;text-align:center">
+        <div style="font-size:1.5rem;font-weight:800;color:var(--color-amber-700)">${{ outstanding_balance|floatformat:0 }}</div>
+        <div style="font-size:.8125rem;color:var(--color-amber-700);margin-top:.25rem;font-weight:600">Outstanding</div>
+      </div>
+
+    </div>
+
+    {# Collection rate bar #}
+    <div style="margin-top:1.25rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.375rem">
+        <span style="font-size:.8rem;color:var(--color-ink-500);font-weight:500">Collection Rate</span>
+        <span style="font-size:.875rem;font-weight:700;color:{% if collection_rate >= 80 %}var(--color-emerald-600){% elif collection_rate >= 60 %}var(--color-amber-600){% else %}var(--color-rose-600){% endif %}">{{ collection_rate|floatformat:1 }}%</span>
+      </div>
+      <div class="dhealth-bar" style="height:8px">
+        <div class="dhealth-fill {% if collection_rate >= 80 %}dhf-green{% elif collection_rate >= 60 %}dhf-amber{% else %}dhf-red{% endif %}"
+             style="width:{{ collection_rate|floatformat:0 }}%"></div>
+      </div>
+    </div>
+  </div>
+
+  {# Export cards ── #}
+  <div class="dcard">
+    <div class="dcard-title" style="margin-bottom:1.25rem">Export Data</div>
+
+    <div style="display:flex;flex-direction:column;gap:.625rem;margin-bottom:1rem">
+      <div style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--color-ink-400);margin-bottom:.125rem">PDF Reports</div>
       <a href="{% url 'reports:jobs_pdf' %}"
          style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--color-ink-900);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem;transition:background .15s">
         <span style="display:flex;align-items:center;gap:.5rem">
-          <span>📋</span> Jobs Report
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Jobs Report
         </span>
-        <span style="font-size:.75rem;opacity:.7;background:rgba(255,255,255,.1);padding:.125rem .5rem;border-radius:4px">PDF</span>
+        <span style="font-size:.7rem;background:rgba(255,255,255,.15);padding:.125rem .5rem;border-radius:4px">PDF</span>
       </a>
-
       <a href="{% url 'reports:financial_pdf' %}"
          style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--color-ink-900);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem;transition:background .15s">
         <span style="display:flex;align-items:center;gap:.5rem">
-          <span>💰</span> Financial Report
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          Financial Report
         </span>
-        <span style="font-size:.75rem;opacity:.7;background:rgba(255,255,255,.1);padding:.125rem .5rem;border-radius:4px">PDF</span>
+        <span style="font-size:.7rem;background:rgba(255,255,255,.15);padding:.125rem .5rem;border-radius:4px">PDF</span>
       </a>
     </div>
 
-    <div style="background:var(--color-ink-25);border:1px solid var(--color-ink-100);border-radius:8px;padding:1rem">
-      <div style="font-size:.8125rem;font-weight:600;color:var(--color-ink-700);margin-bottom:.5rem">Features</div>
-      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.25rem">
-        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Professional formatting</li>
-        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Summary statistics</li>
-        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Detailed data tables</li>
-        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Print-ready format</li>
-      </ul>
-    </div>
-  </div>
-
-  {# CSV Exports #}
-  <div class="card">
-    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem">
-      <div style="width:44px;height:44px;border-radius:10px;background:var(--color-emerald-100);display:flex;align-items:center;justify-content:center;font-size:1.25rem">📊</div>
-      <div>
-        <div style="font-weight:700;font-size:1rem;color:var(--color-ink-800)">CSV Exports</div>
-        <div style="font-size:.8125rem;color:var(--color-ink-400)">Excel-compatible data exports</div>
-      </div>
-    </div>
-
-    <div style="display:flex;flex-direction:column;gap:.625rem;margin-bottom:1.25rem">
+    <div style="display:flex;flex-direction:column;gap:.625rem">
+      <div style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--color-ink-400);margin-bottom:.125rem">CSV Exports</div>
       <a href="{% url 'reports:customers_csv' %}"
          style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--color-emerald-600);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem;transition:background .15s">
         <span style="display:flex;align-items:center;gap:.5rem">
-          <span>👥</span> Customers Export
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Customers
         </span>
-        <span style="font-size:.75rem;opacity:.7;background:rgba(255,255,255,.15);padding:.125rem .5rem;border-radius:4px">CSV</span>
+        <span style="font-size:.7rem;background:rgba(255,255,255,.2);padding:.125rem .5rem;border-radius:4px">CSV</span>
       </a>
-
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--color-ink-50);border:1px solid var(--color-ink-100);color:var(--color-ink-300);border-radius:8px;font-size:.875rem;cursor:not-allowed">
+      <a href="{% url 'reports:jobs_csv' %}"
+         style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--color-sky-600);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem;transition:background .15s">
         <span style="display:flex;align-items:center;gap:.5rem">
-          <span>📈</span> Jobs Export
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+          All Jobs
         </span>
-        <span style="font-size:.75rem;background:var(--color-ink-100);padding:.125rem .5rem;border-radius:4px">Coming Soon</span>
-      </div>
-    </div>
-
-    <div style="background:var(--color-ink-25);border:1px solid var(--color-ink-100);border-radius:8px;padding:1rem">
-      <div style="font-size:.8125rem;font-weight:600;color:var(--color-ink-700);margin-bottom:.5rem">Features</div>
-      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.25rem">
-        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Excel-compatible format</li>
-        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ All data fields included</li>
-        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Easy data analysis</li>
-        <li style="font-size:.8125rem;color:var(--color-ink-400)">✓ Import into other systems</li>
-      </ul>
+        <span style="font-size:.7rem;background:rgba(255,255,255,.2);padding:.125rem .5rem;border-radius:4px">CSV</span>
+      </a>
     </div>
   </div>
 
 </div>
 
-{# ── Quick stats summary ── #}
-<div class="card">
-  <div class="section-title" style="margin-bottom:1.25rem;text-align:center">Quick Statistics</div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem">
-
-    <div style="text-align:center;padding:1.25rem;background:var(--color-ink-25);border:1px solid var(--color-ink-100);border-radius:10px">
-      <div style="font-size:1.5rem;margin-bottom:.5rem">👥</div>
-      <div style="font-size:1.5rem;font-weight:800;color:var(--color-ink-900)">{{ total_customers }}</div>
-      <div style="font-size:.8125rem;color:var(--color-ink-400);margin-top:.25rem">Total Customers</div>
-    </div>
-
-    <div style="text-align:center;padding:1.25rem;background:var(--color-violet-50);border:1px solid var(--color-violet-200);border-radius:10px">
-      <div style="font-size:1.5rem;margin-bottom:.5rem">💳</div>
-      <div style="font-size:1.5rem;font-weight:800;color:var(--color-violet-600)">{{ total_payments }}</div>
-      <div style="font-size:.8125rem;color:var(--color-violet-400);margin-top:.25rem">Total Payments</div>
-    </div>
-
-    <div style="text-align:center;padding:1.25rem;background:var(--color-emerald-50);border:1px solid var(--color-emerald-100);border-radius:10px">
-      <div style="font-size:1.5rem;margin-bottom:.5rem">💹</div>
-      <div style="font-size:1.5rem;font-weight:800;color:var(--color-emerald-600)">${{ total_collected|floatformat:0 }}</div>
-      <div style="font-size:.8125rem;color:var(--color-emerald-700);margin-top:.25rem">Total Collected</div>
-    </div>
-
+{# ── Payment method breakdown ── #}
+{% if payment_method_stats %}
+<div class="dcard">
+  <div class="dcard-head">
+    <div class="dcard-title">Payment Methods</div>
+    <a href="/admin/payments/payment/" class="dcard-link">View all →</a>
   </div>
-  <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--color-ink-100);text-align:center;font-size:.875rem;color:var(--color-ink-400)">
-    <strong style="color:var(--color-ink-700)">Pro Tip:</strong> Use PDF reports for presentations and CSV exports for data analysis in Excel.
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem">
+    {% for pm in payment_method_stats %}
+    <div style="padding:1rem;background:var(--color-ink-25);border:1px solid var(--color-ink-100);border-radius:10px;text-align:center">
+      <div style="font-size:1.25rem;font-weight:800;color:var(--color-ink-900)">{{ pm.count }}</div>
+      <div style="font-size:.8125rem;color:var(--color-ink-500);font-weight:600;margin-top:.25rem">{{ pm.payment_method|title }}</div>
+      <div style="font-size:.75rem;color:var(--color-emerald-600);font-weight:700;margin-top:.125rem">${{ pm.total|floatformat:0 }}</div>
+    </div>
+    {% endfor %}
   </div>
 </div>
+{% endif %}
 
+{# Chart data #}
+<script id="reportChartData" type="application/json">
+{
+  "months":  [{% for m in monthly_data %}"{{ m.month }}"{% if not forloop.last %},{% endif %}{% endfor %}],
+  "revenue": [{% for m in monthly_data %}{{ m.revenue }}{% if not forloop.last %},{% endif %}{% endfor %}],
+  "jobTypeLabels": [{% for j in job_type_stats %}"{{ j.job_type }}"{% if not forloop.last %},{% endif %}{% endfor %}],
+  "jobTypeCounts": [{% for j in job_type_stats %}{{ j.count }}{% if not forloop.last %},{% endif %}{% endfor %}]
+}
+</script>
+
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const raw = document.getElementById('reportChartData');
+  if (!raw) return;
+  const data = JSON.parse(raw.textContent);
+
+  Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
+  Chart.defaults.color = '#566784';
+
+  // ── Monthly Revenue Chart ──
+  const ctx1 = document.getElementById('monthlyRevenueChart');
+  if (ctx1) {
+    new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: data.months,
+        datasets: [{
+          label: 'Revenue',
+          data: data.revenue,
+          backgroundColor: 'rgba(94,86,236,.2)',
+          borderColor: '#5e56ec',
+          borderWidth: 2,
+          borderRadius: 6,
+          borderSkipped: false,
+          hoverBackgroundColor: 'rgba(94,86,236,.4)',
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#0d1117',
+            titleColor: '#fff',
+            bodyColor: 'rgba(255,255,255,.7)',
+            padding: 10,
+            cornerRadius: 8,
+            callbacks: {
+              label: (item) => ` $${Number(item.raw).toLocaleString()}`,
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, border: { display: false } },
+          y: {
+            grid: { color: 'rgba(0,0,0,.05)' },
+            border: { display: false },
+            beginAtZero: true,
+            ticks: {
+              callback: (v) => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v)
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // ── Job Type Donut ──
+  const ctx2 = document.getElementById('jobTypeReportChart');
+  if (ctx2 && data.jobTypeCounts.length > 0) {
+    const typeColors = ['#5e56ec','#10a065','#0475bb'];
+    new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: data.jobTypeLabels,
+        datasets: [{
+          data: data.jobTypeCounts,
+          backgroundColor: typeColors,
+          borderWidth: 2,
+          borderColor: '#fff',
+          hoverOffset: 4,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0d1117', titleColor: '#fff', bodyColor: 'rgba(255,255,255,.7)', padding: 10, cornerRadius: 8 } }
+      }
+    });
+  }
+});
+</script>
 {% endblock %}

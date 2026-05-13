@@ -103,6 +103,7 @@
           <rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/>
         </svg>
         Jobs
+        {% if overdue_count %}<span class="sidebar-badge">{{ overdue_count }}</span>{% endif %}
       </a>
 
       <a href="/admin/customers/customer/" class="sidebar-item">
