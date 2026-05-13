@@ -26,7 +26,20 @@ DATABASES = {
 
 # Static Files for Production
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Django 5.2 uses STORAGES dict — the old STATICFILES_STORAGE key is ignored.
+# Use WhiteNoise compressed manifest storage for hashed filenames + gzip.
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        # CompressedStaticFilesStorage: gzip/brotli compression without URL
+        # rewriting. CompressedManifestStaticFilesStorage rewrites @import
+        # references inside CSS which breaks Tailwind v4's @import directives.
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 # Logging
 LOGGING = {

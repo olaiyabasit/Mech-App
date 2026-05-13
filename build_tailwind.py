@@ -18,10 +18,10 @@ STATIC_OUTPUT_FILE = STATIC_OUTPUT_DIR / "styles.css"
 def build_tailwind():
     """Copy the Tailwind source file to the static output directory."""
     print("Building Tailwind CSS...")
-    
+
     # Create output directory if it doesn't exist
     STATIC_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    
+
     # Copy the source CSS file
     if STATIC_SRC.exists():
         shutil.copy2(STATIC_SRC, STATIC_OUTPUT_FILE)
@@ -29,6 +29,7 @@ def build_tailwind():
     else:
         print(f"❌ Source file not found: {STATIC_SRC}")
         return False
+
     
     # Add basic CSS reset and Tailwind classes
     with open(STATIC_OUTPUT_FILE, 'a') as f:

@@ -142,6 +142,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Tailwind CSS settings
 TAILWIND_APP_NAME = 'theme'
+# Point to the actual compiled CSS file (default library value is 'css/dist/styles.css' which doesn't exist)
+TAILWIND_CSS_PATH = 'css/styles.css'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
