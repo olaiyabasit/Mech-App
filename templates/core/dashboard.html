@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — WInki{% endblock %}
+{% block page_name %}Dashboard{% endblock %}
+
+{% block content %}
+
+{# ── KPI Row ── #}
+<div class="kpi-row">
+
+  <div class="kpi-card kv">
+    <div class="kpi-top">
+      <div>
+        <div class="kpi-label">Total Jobs</div>
+        <div class="kpi-value">{{ job_stats.total }}</div>
+        <div class="kpi-hint">All time records</div>
+      </div>
+      <div class="kpi-icon ki-v">📊</div>
+    </div>
+  </div>
+
+  <div class="kpi-card kg">
+    <div class="kpi-top">
+      <div>
+        <div class="kpi-label">Total Revenue</div>
+        <div class="kpi-value">${{ total_revenue|floatformat:0 }}</div>
+        <div class="kpi-hint">Completed projects</div>
+      </div>
+      <div class="kpi-icon ki-g">💵</div>
+    </div>
+  </div>
+
+  <div class="kpi-card ka">
+    <div class="kpi-top">
+      <div>
+        <div class="kpi-label">Outstanding</div>
+        <div class="kpi-value">${{ outstanding_balance|floatformat:0 }}</div>
+        <div class="kpi-hint">Pending payments</div>
+      </div>
+      <div class="kpi-icon ki-a">⏳</div>
+    </div>
+  </div>
+
+  <div class="kpi-card ks">
+    <div class="kpi-top">
+      <div>
+        <div class="kpi-label">Today's Jobs</div>
+        <div class="kpi-value">{{ job_stats.today }}</div>
+        <div class="kpi-hint">New today</div>
+      </div>
+      <div class="kpi-icon ki-s">🚀</div>
+    </div>
+  </div>
+
+</div>
+{# end kpi-row #}
+
+{# ── Two-column layout ── #}
+<div style="display:grid;grid-template-columns:1fr 320px;gap:1.25rem;align-items:start">
+
+  {# Left column #}
+  <div style="display:flex;flex-direction:column;gap:1.25rem">
+
+    {# Pipeline #}
+    <div class="card">
+      <div class="section-header">
+        <span class="section-title">Job Pipeline</span>
+        <a href="/admin/jobs/job/"
+           style="font-size:.8125rem;font-weight:600;color:var(--color-violet-500);text-decoration:none">View all →</a>
+      </div>
+      <div class="pipeline-row">
+        <div class="pipeline-pill pp-pending">
+          <span class="pp-count">{{ job_stats.pending }}</span>
+          <span class="pp-label">Pending</span>
+        </div>
+        <div class="pipeline-pill pp-progress">
+          <span class="pp-count">{{ job_stats.in_progress }}</span>
+          <span class="pp-label">In Progress</span>
+        </div>
+        <div class="pipeline-pill pp-completed">
+          <span class="pp-count">{{ job_stats.completed }}</span>
+          <span class="pp-label">Completed</span>
+        </div>
+        <div class="pipeline-pill pp-delivered">
+          <span class="pp-count">{{ job_stats.delivered }}</span>
+          <span class="pp-label">Delivered</span>
+        </div>
+      </div>
+    </div>
+
+    {# Recent Jobs #}
+    {% if recent_jobs %}
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="section-header" style="padding:1.25rem 1.5rem 1rem">
+        <span class="section-title">Recent Projects</span>
+        <div style="display:flex;gap:.5rem">
+          <a href="/admin/jobs/job/add/" class="btn btn-primary" style="font-size:.75rem;padding:.375rem .75rem">+ New Job</a>
+          <a href="/admin/jobs/job/" class="btn btn-secondary" style="font-size:.75rem;padding:.375rem .75rem">View All</a>
+        </div>
+      </div>
+      <table class="table-cinematic">
+        <thead>
+          <tr>
+            <th>Project ID</th>
+            <th>Customer</th>
+            <th>Service</th>
+            <th>Status</th>
+            <th style="text-align:right">Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in recent_jobs %}
+          <tr>
+            <td>
+              <a href="/admin/jobs/job/{{ job.job_id }}/change/"
+                 style="font-weight:600;color:var(--color-violet-500);text-decoration:none">
+                {{ job.job_id }}
+              </a>
+            </td>
+            <td>
+              <div style="font-weight:500;font-size:.875rem">{{ job.customer.name }}</div>
+              <div style="font-size:.75rem;color:var(--color-ink-300)">{{ job.customer.phone|default:"—" }}</div>
+            </td>
+            <td>
+              <span style="font-size:.75rem;font-weight:600;color:var(--color-ink-500)">{{ job.get_job_type_display }}</span>
+            </td>
+            <td>
+              {% if job.status == 'pending' %}
+                <span class="status-badge status-pending">{{ job.get_status_display }}</span>
+              {% elif job.status == 'in_progress' %}
+                <span class="status-badge status-progress">{{ job.get_status_display }}</span>
+              {% elif job.status == 'completed' %}
+                <span class="status-badge status-completed">{{ job.get_status_display }}</span>
+              {% elif job.status == 'delivered' %}
+                <span class="status-badge status-delivered">{{ job.get_status_display }}</span>
+              {% endif %}
+            </td>
+            <td style="text-align:right">
+              <div style="font-weight:700">${{ job.total_cost }}</div>
+              {% if job.outstanding_balance > 0 %}
+                <div style="font-size:.75rem;color:var(--color-amber-600)">${{ job.outstanding_balance }} due</div>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    {# Recent Payments #}
+    {% if recent_payments %}
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="section-header" style="padding:1.25rem 1.5rem 1rem">
+        <span class="section-title">Recent Payments</span>
+        <a href="/admin/payments/payment/" class="btn btn-secondary" style="font-size:.75rem;padding:.375rem .75rem">View All</a>
+      </div>
+      <table class="table-cinematic">
+        <thead>
+          <tr>
+            <th>Job</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th style="text-align:right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payment in recent_payments %}
+          <tr>
+            <td>
+              <a href="/admin/jobs/job/{{ payment.job.job_id }}/change/"
+                 style="font-weight:600;color:var(--color-violet-500);text-decoration:none">
+                {{ payment.job.job_id }}
+              </a>
+            </td>
+            <td style="font-size:.875rem">{{ payment.job.customer.name }}</td>
+            <td style="font-size:.875rem;color:var(--color-ink-400)">{{ payment.payment_date|date:"M d, Y" }}</td>
+            <td style="text-align:right;font-weight:700;color:var(--color-emerald-600)">${{ payment.amount }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+  </div>
+  {# end left column #}
+
+  {# Right sidebar #}
+  <div style="display:flex;flex-direction:column;gap:1.25rem">
+
+    {# Quick Actions #}
+    <div class="card">
+      <div class="section-title" style="margin-bottom:1rem">Quick Actions</div>
+      <a href="/admin/jobs/job/add/"
+         style="display:flex;align-items:center;gap:.625rem;padding:.75rem 1rem;background:var(--color-violet-500);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem;margin-bottom:.75rem;transition:background .15s">
+        <span>➕</span> Create New Job
+      </a>
+      <a href="/admin/customers/customer/add/"
+         style="display:flex;align-items:center;gap:.625rem;padding:.75rem 1rem;background:var(--color-ink-50);color:var(--color-ink-700);border:1px solid var(--color-ink-200);border-radius:8px;text-decoration:none;font-weight:600;font-size:.875rem;margin-bottom:.875rem;transition:background .15s">
+        <span>👤</span> Add Customer
+      </a>
+      <div class="qa-grid">
+        <a href="/admin/jobs/job/" class="qa-item qa-violet">
+          <span class="qa-icon">📋</span>
+          <span class="qa-label">Jobs</span>
+        </a>
+        <a href="/admin/customers/customer/" class="qa-item qa-emerald">
+          <span class="qa-icon">👥</span>
+          <span class="qa-label">Customers</span>
+        </a>
+        <a href="/admin/payments/payment/" class="qa-item qa-amber">
+          <span class="qa-icon">💰</span>
+          <span class="qa-label">Payments</span>
+        </a>
+        <a href="/admin/" class="qa-item qa-sky">
+          <span class="qa-icon">⚙️</span>
+          <span class="qa-label">Admin</span>
+        </a>
+      </div>
+    </div>
+
+    {# Business Insights #}
+    <div class="card">
+      <div class="section-title" style="margin-bottom:.875rem">Business Insights</div>
+      <div class="insight-row">
+        <span class="insight-label">Avg Job Value</span>
+        <span class="insight-value">${{ average_job_value|floatformat:0 }}</span>
+      </div>
+      <div class="insight-row">
+        <span class="insight-label">Collection Rate</span>
+        <span class="insight-value">{% widthratio total_revenue total_revenue|add:outstanding_balance 100 %}%</span>
+      </div>
+      <div class="insight-row">
+        <span class="insight-label">Active Projects</span>
+        <span class="insight-value">{{ job_stats.in_progress }}</span>
+      </div>
+      <div class="insight-row">
+        <span class="insight-label">Last Updated</span>
+        <span style="font-size:.8125rem;color:var(--color-ink-400)" id="liveClock">{{ current_time|date:"M d, Y H:i" }}</span>
+      </div>
+    </div>
+
+  </div>
+  {# end right sidebar #}
+
+</div>
+{# end two-column grid #}
+
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script>
+// Live clock
+(function() {
+  function tick() {
+    const el = document.getElementById('liveClock');
+    if (!el) return;
+    const d = new Date();
+    const opts = { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' };
+    el.textContent = d.toLocaleDateString('en-US', opts);
+  }
+  tick();
+  setInterval(tick, 60000);
+})();
+</script>
+{% endblock %}

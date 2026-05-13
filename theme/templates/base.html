@@ -1,0 +1,325 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}WInki — Vehicle & Alloy Wheel Refurbishment{% endblock %}</title>
+  <meta name="description" content="Professional vehicle and alloy wheel refurbishment business management system">
+  {% tailwind_css %}
+  <style>
+    /* ── Page loader bar ── */
+    #page-loader {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 3px; z-index: 9999;
+      background: linear-gradient(90deg, #5e56ec, #7b74f0, #5e56ec);
+      background-size: 200% 100%;
+      animation: loaderSlide .6s ease-out forwards, loaderShimmer 1s linear infinite;
+      transform-origin: left;
+    }
+    @keyframes loaderSlide {
+      from { transform: scaleX(0); opacity: 1; }
+      to   { transform: scaleX(1); opacity: 1; }
+    }
+    @keyframes loaderShimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    #page-loader.done {
+      animation: loaderFade .3s ease forwards;
+    }
+    @keyframes loaderFade {
+      to { opacity: 0; }
+    }
+    /* ── Page fade in ── */
+    .page-body { animation: pageFadeIn .35s ease both; }
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    /* ── Toast notifications ── */
+    #toast-container {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      display: flex; flex-direction: column; gap: .5rem;
+      z-index: 9998; pointer-events: none;
+    }
+    .toast {
+      display: flex; align-items: center; gap: .625rem;
+      padding: .75rem 1rem; border-radius: 10px;
+      font-size: .875rem; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,.15);
+      pointer-events: auto;
+      animation: toastIn .3s ease both;
+      max-width: 320px;
+    }
+    .toast.out { animation: toastOut .3s ease forwards; }
+    .toast-success { background: #fff; border-left: 4px solid #10a065; color: #0d1117; }
+    .toast-error   { background: #fff; border-left: 4px solid #cf2020; color: #0d1117; }
+    .toast-info    { background: #fff; border-left: 4px solid #5e56ec; color: #0d1117; }
+    @keyframes toastIn  { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+    @keyframes toastOut { to   { opacity:0; transform: translateX(20px); } }
+  </style></head>
+
+<body>
+<div id="page-loader"></div>
+<div id="toast-container"></div>
+
+{% if user.is_authenticated %}
+
+{# ── AUTHENTICATED: App shell with sidebar ── #}
+<div class="mob-overlay" id="mobOverlay"></div>
+
+<div class="app-shell">
+
+  {# ─── Sidebar ─── #}
+  <aside class="sidebar" id="sidebar">
+
+    {# Brand #}
+    <div class="sidebar-brand">
+      <div class="sidebar-logo-mark">W</div>
+      <div>
+        <div class="sidebar-brand-name">WInki</div>
+        <div class="sidebar-brand-tagline">Refurbishment Pro</div>
+      </div>
+    </div>
+
+    {# Nav #}
+    <nav class="sidebar-nav">
+
+      <div class="sidebar-group-label">Main</div>
+
+      <a href="{% url 'core:dashboard' %}"
+         class="sidebar-item {% if request.resolver_match.url_name == 'dashboard' and request.resolver_match.app_name == 'core' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <a href="/admin/jobs/job/" class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/>
+        </svg>
+        Jobs
+      </a>
+
+      <a href="/admin/customers/customer/" class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+        Customers
+      </a>
+
+      <a href="/admin/payments/payment/" class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="1" y="4" width="22" height="16" rx="2"/>
+          <path d="M1 10h22"/>
+        </svg>
+        Payments
+      </a>
+
+      <div class="sidebar-group-label" style="margin-top:.75rem">Reports</div>
+
+      <a href="{% url 'reports:dashboard' %}"
+         class="sidebar-item {% if request.resolver_match.app_name == 'reports' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/>
+        </svg>
+        Analytics
+      </a>
+
+      <div class="sidebar-group-label" style="margin-top:.75rem">System</div>
+
+      <a href="/admin/" class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"/>
+        </svg>
+        Admin Panel
+      </a>
+
+    </nav>
+
+    {# Footer / user #}
+    <div class="sidebar-footer">
+      <div class="sidebar-user" style="margin-bottom:.5rem">
+        <div class="sidebar-avatar">{{ user.first_name|first|default:user.username|first|upper }}</div>
+        <div>
+          <div class="sidebar-username">{{ user.first_name|default:user.username }}</div>
+          <div style="font-size:.6875rem;color:var(--color-ink-400);">Staff</div>
+        </div>
+      </div>
+      <a href="{% url 'admin:logout' %}" class="sidebar-item" style="color:var(--color-rose-600);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+        </svg>
+        Sign out
+      </a>
+    </div>
+
+  </aside>
+  {# end sidebar #}
+
+  {# ─── Main wrap ─── #}
+  <div class="main-wrap">
+
+    {# Topbar #}
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:.75rem">
+        <button id="sidebarToggle"
+                style="display:none;background:none;border:none;cursor:pointer;padding:.25rem;border-radius:6px;color:var(--color-ink-600)"
+                onclick="toggleSidebar()"
+                aria-label="Toggle sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18"/>
+          </svg>
+        </button>
+        <span class="topbar-title">{% block page_name %}WInki{% endblock %}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.75rem">
+        <a href="/admin/jobs/job/add/"
+           style="display:inline-flex;align-items:center;gap:.375rem;padding:.4rem .875rem;background:var(--color-violet-500);color:#fff;border-radius:8px;font-size:.8125rem;font-weight:600;text-decoration:none;transition:background .15s">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          New Job
+        </a>
+        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--color-violet-500),var(--color-violet-700));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;color:#fff">
+          {{ user.first_name|first|default:user.username|first|upper }}
+        </div>
+      </div>
+    </header>
+
+    {# Page content #}
+    <main class="page-body {% block main_classes %}{% endblock %}">
+      {% block content %}{% endblock %}
+    </main>
+
+  </div>
+  {# end main-wrap #}
+
+</div>
+{# end app-shell #}
+
+{% else %}
+
+{# ── UNAUTHENTICATED: Dark landing page ── #}
+<style>
+  body { background:#0d1117; color:#e6edf3; }
+  .lhero { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem; text-align:center; }
+  .lbadge { display:inline-flex; align-items:center; gap:.5rem; background:rgba(94,86,236,.15); border:1px solid rgba(94,86,236,.3); color:#7b74f0; padding:.375rem 1rem; border-radius:20px; font-size:.8125rem; font-weight:600; letter-spacing:.04em; margin-bottom:2rem; }
+  .llogo { width:80px; height:80px; border-radius:20px; background:linear-gradient(135deg,#5e56ec,#3d38b0); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:2rem; color:#fff; margin:0 auto 2rem; box-shadow:0 0 60px rgba(94,86,236,.4); }
+  .lheadline { font-size:clamp(2.5rem,6vw,5rem); font-weight:900; line-height:1.05; letter-spacing:-.03em; margin-bottom:1.5rem; background:linear-gradient(135deg,#fff 40%,#7b74f0); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .lsub { font-size:1.125rem; color:#8b949e; max-width:520px; margin:0 auto 2.5rem; line-height:1.7; }
+  .lbtn { display:inline-flex; align-items:center; gap:.5rem; padding:.875rem 2rem; background:var(--color-violet-500,#5e56ec); color:#fff; border-radius:10px; font-weight:700; font-size:1rem; text-decoration:none; transition:background .15s,transform .15s; }
+  .lbtn:hover { background:#4d44d8; transform:translateY(-2px); }
+  .lfeat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.5rem; max-width:800px; margin:4rem auto 0; text-align:left; }
+  .lfeat { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:1.5rem; }
+  .lfeat-icon { font-size:1.5rem; margin-bottom:.75rem; }
+  .lfeat-title { font-weight:700; color:#e6edf3; margin-bottom:.375rem; }
+  .lfeat-desc { font-size:.875rem; color:#8b949e; line-height:1.6; }
+  .lfoot { text-align:center; padding:2rem; color:#8b949e; font-size:.8125rem; border-top:1px solid rgba(255,255,255,.06); margin-top:4rem; }
+</style>
+
+<div class="lhero">
+  <div class="lbadge">✦ Professional Business System</div>
+  <div class="llogo">W</div>
+  <h1 class="lheadline">Vehicle &amp; Alloy Wheel<br>Refurbishment</h1>
+  <p class="lsub">Streamline your operations with precision job tracking, intelligent customer management, and comprehensive business analytics.</p>
+  <a href="{% url 'admin:login' %}" class="lbtn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/>
+    </svg>
+    Sign In to Access
+  </a>
+  <div class="lfeat-grid">
+    <div class="lfeat">
+      <div class="lfeat-icon">📋</div>
+      <div class="lfeat-title">Job Management</div>
+      <div class="lfeat-desc">Full workflow from inquiry to delivery. Track progress and manage timelines.</div>
+    </div>
+    <div class="lfeat">
+      <div class="lfeat-icon">👥</div>
+      <div class="lfeat-title">Customer Relations</div>
+      <div class="lfeat-desc">Complete contact database with detailed history and service records.</div>
+    </div>
+    <div class="lfeat">
+      <div class="lfeat-icon">💳</div>
+      <div class="lfeat-title">Financial Control</div>
+      <div class="lfeat-desc">Payment tracking, deposits, outstanding balances, and revenue analytics.</div>
+    </div>
+    <div class="lfeat">
+      <div class="lfeat-icon">📊</div>
+      <div class="lfeat-title">Reports &amp; Exports</div>
+      <div class="lfeat-desc">PDF reports and CSV exports ready for presentations and analysis.</div>
+    </div>
+  </div>
+</div>
+<footer class="lfoot">© 2025 WInki — Premium Refurbishment Business Management</footer>
+
+{% endif %}
+
+{% block javascript %}
+<script>
+// ── Page loader ──
+window.addEventListener('load', function() {
+  const loader = document.getElementById('page-loader');
+  if (loader) { loader.classList.add('done'); setTimeout(() => loader.remove(), 400); }
+});
+
+// Show loader on navigation
+document.addEventListener('click', function(e) {
+  const a = e.target.closest('a');
+  if (a && a.href && !a.href.startsWith('#') && !a.target && a.hostname === location.hostname) {
+    const loader = document.getElementById('page-loader');
+    if (loader) { loader.style.animation = 'none'; loader.style.transform = 'scaleX(0)'; loader.style.opacity = '1'; requestAnimationFrame(() => { loader.style.animation = ''; }); }
+  }
+});
+
+// ── Toast system ──
+window.showToast = function(message, type = 'info', duration = 4000) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `<span style="font-size:1rem;font-weight:700">${icons[type]||'ℹ'}</span><span>${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.classList.add('out'); setTimeout(() => toast.remove(), 300); }, duration);
+};
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('mobOverlay');
+  if (sidebar) sidebar.classList.toggle('open');
+  if (overlay) overlay.classList.toggle('open');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Show hamburger on mobile
+  const toggle = document.getElementById('sidebarToggle');
+  if (toggle) {
+    function checkMobile() {
+      toggle.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+    }
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+  }
+
+  // Close sidebar when overlay clicked
+  const overlay = document.getElementById('mobOverlay');
+  if (overlay) {
+    overlay.addEventListener('click', function() {
+      document.getElementById('sidebar')?.classList.remove('open');
+      overlay.classList.remove('open');
+    });
+  }
+});
+</script>
+{% endblock %}
+
+</body>
+</html>
