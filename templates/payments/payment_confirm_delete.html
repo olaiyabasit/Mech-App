@@ -8,7 +8,7 @@
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-rose-600)" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
     </div>
     <div style="font-size:1.25rem;font-weight:700;color:var(--color-ink-900);margin-bottom:.5rem">Delete Payment #{{ payment.payment_id }}?</div>
-    <div style="color:var(--color-ink-500);margin-bottom:.25rem">{{ payment.job.job_id }} — ${{ payment.amount }}</div>
+    <div style="color:var(--color-ink-500);margin-bottom:.25rem">{{ payment.job.job_id }} — ₦{{ payment.amount }}</div>
     <div style="color:var(--color-rose-600);font-size:.875rem;margin-bottom:2rem">This cannot be undone. The job's outstanding balance will increase.</div>
     <form method="post" style="display:flex;gap:.75rem;justify-content:center">
       {% csrf_token %}

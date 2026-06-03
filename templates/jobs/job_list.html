@@ -90,10 +90,10 @@
           <td class="dtable-secondary">
             {{ job.expected_completion|date:"M d, Y"|default:"—" }}
           </td>
-          <td style="text-align:right;font-weight:700">${{ job.total_cost }}</td>
+          <td style="text-align:right;font-weight:700">₦{{ job.total_cost }}</td>
           <td style="text-align:right">
             {% if job.outstanding_balance > 0 %}
-              <span style="color:var(--color-amber-600);font-weight:700">${{ job.outstanding_balance }}</span>
+              <span style="color:var(--color-amber-600);font-weight:700">₦{{ job.outstanding_balance }}</span>
             {% else %}
               <span style="color:var(--color-emerald-600);font-weight:600">Paid</span>
             {% endif %}

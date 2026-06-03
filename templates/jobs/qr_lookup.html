@@ -32,7 +32,7 @@ h1{font-size:1.5rem;font-weight:800;margin-bottom:.375rem}
   <div>
     <div class="row"><span class="lbl">Service Type</span><span class="val">{{ job.get_job_type_display }}</span></div>
     {% if job.expected_completion %}<div class="row"><span class="lbl">Expected Completion</span><span class="val">{{ job.expected_completion|date:"M d, Y" }}</span></div>{% endif %}
-    {% if job.outstanding_balance > 0 %}<div class="row"><span class="lbl">Outstanding Balance</span><span class="val" style="color:#f59e0b">${{ job.outstanding_balance }}</span></div>{% endif %}
+    {% if job.outstanding_balance > 0 %}<div class="row"><span class="lbl">Outstanding Balance</span><span class="val" style="color:#f59e0b">₦{{ job.outstanding_balance }}</span></div>{% endif %}
     {% if job.delivered_date %}<div class="row"><span class="lbl">Delivered</span><span class="val" style="color:#10a065">{{ job.delivered_date|date:"M d, Y" }}</span></div>{% endif %}
   </div>
   <div class="footer">WInki — Professional Vehicle & Alloy Wheel Refurbishment</div>

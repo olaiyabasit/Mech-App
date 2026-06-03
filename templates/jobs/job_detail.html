@@ -63,12 +63,12 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
         <div class="wfield"><div class="wfield-lbl">Job Type</div><div class="wfield-val">{{ job.get_job_type_display }}</div></div>
         <div class="wfield"><div class="wfield-lbl">Status</div><div class="wfield-val">{{ job.get_status_display }}</div></div>
-        <div class="wfield"><div class="wfield-lbl">Total Cost</div><div class="wfield-val" style="font-size:1.25rem;font-weight:800;color:var(--color-ink-900)">${{ job.total_cost }}</div></div>
-        <div class="wfield"><div class="wfield-lbl">Deposit</div><div class="wfield-val">${{ job.deposit_amount }}</div></div>
-        <div class="wfield"><div class="wfield-lbl">Total Paid</div><div class="wfield-val" style="color:var(--color-emerald-600);font-weight:700">${{ job.total_paid }}</div></div>
+        <div class="wfield"><div class="wfield-lbl">Total Cost</div><div class="wfield-val" style="font-size:1.25rem;font-weight:800;color:var(--color-ink-900)">₦{{ job.total_cost }}</div></div>
+        <div class="wfield"><div class="wfield-lbl">Deposit</div><div class="wfield-val">₦{{ job.deposit_amount }}</div></div>
+        <div class="wfield"><div class="wfield-lbl">Total Paid</div><div class="wfield-val" style="color:var(--color-emerald-600);font-weight:700">₦{{ job.total_paid }}</div></div>
         <div class="wfield"><div class="wfield-lbl">Outstanding</div>
           <div class="wfield-val" style="font-weight:700;color:{% if job.outstanding_balance > 0 %}var(--color-amber-600){% else %}var(--color-emerald-600){% endif %}">
-            {% if job.outstanding_balance > 0 %}${{ job.outstanding_balance }}{% else %}Fully Paid{% endif %}
+            {% if job.outstanding_balance > 0 %}₦{{ job.outstanding_balance }}{% else %}Fully Paid{% endif %}
           </div>
         </div>
         <div class="wfield"><div class="wfield-lbl">Created</div><div class="wfield-val">{{ job.created_date|date:"M d, Y" }}</div></div>
@@ -145,7 +145,7 @@
               <td><div class="dtable-primary">{{ svc.service_name }}</div><div class="dtable-secondary">{{ svc.description }}</div></td>
               <td><span class="dtable-tag">{{ svc.get_status_display }}</span></td>
               <td class="dtable-secondary">{{ svc.estimated_hours|default:"—" }}</td>
-              <td style="text-align:right;font-weight:700">${{ svc.cost }}</td>
+              <td style="text-align:right;font-weight:700">₦{{ svc.cost }}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -174,7 +174,7 @@
               <td><span class="dtable-tag">{{ p.get_payment_type_display }}</span></td>
               <td><span class="dtable-tag">{{ p.get_payment_method_display }}</span></td>
               <td class="dtable-secondary">{{ p.reference_number|default:"—" }}</td>
-              <td style="text-align:right;font-weight:700;color:var(--color-emerald-600)">${{ p.amount }}</td>
+              <td style="text-align:right;font-weight:700;color:var(--color-emerald-600)">₦{{ p.amount }}</td>
               <td>
                 <div style="display:flex;gap:.25rem">
                   <a href="{% url 'payments:edit' pk=p.payment_id %}" class="dtable-action"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></a>
@@ -230,13 +230,13 @@
     <div class="dcard">
       <div class="dcard-title" style="margin-bottom:1rem">Financial Summary</div>
       <div class="dinsight-list">
-        <div class="dinsight-row"><span class="dinsight-lbl">Total Cost</span><span class="dinsight-val">${{ job.total_cost }}</span></div>
-        <div class="dinsight-row"><span class="dinsight-lbl">Deposit</span><span class="dinsight-val">${{ job.deposit_amount }}</span></div>
-        <div class="dinsight-row"><span class="dinsight-lbl">Total Paid</span><span class="dinsight-val" style="color:var(--color-emerald-600)">${{ job.total_paid }}</span></div>
+        <div class="dinsight-row"><span class="dinsight-lbl">Total Cost</span><span class="dinsight-val">₦{{ job.total_cost }}</span></div>
+        <div class="dinsight-row"><span class="dinsight-lbl">Deposit</span><span class="dinsight-val">₦{{ job.deposit_amount }}</span></div>
+        <div class="dinsight-row"><span class="dinsight-lbl">Total Paid</span><span class="dinsight-val" style="color:var(--color-emerald-600)">₦{{ job.total_paid }}</span></div>
         <div class="dinsight-row">
           <span class="dinsight-lbl">Outstanding</span>
           <span class="dinsight-val" style="color:{% if job.outstanding_balance > 0 %}var(--color-amber-600){% else %}var(--color-emerald-600){% endif %}">
-            {% if job.outstanding_balance > 0 %}${{ job.outstanding_balance }}{% else %}Paid ✓{% endif %}
+            {% if job.outstanding_balance > 0 %}₦{{ job.outstanding_balance }}{% else %}Paid ✓{% endif %}
           </span>
         </div>
       </div>

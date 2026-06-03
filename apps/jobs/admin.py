@@ -54,7 +54,7 @@ class JobAdmin(admin.ModelAdmin):
     inlines = [VehicleDetailsInline, AlloyWheelDetailsInline, ServiceInline, JobPhotoInline]
     
     def outstanding_balance(self, obj):
-        return f"${obj.outstanding_balance:.2f}"
+        return f"₦{obj.outstanding_balance:.2f}"
     outstanding_balance.short_description = 'Outstanding'
     
     def qr_code_display(self, obj):

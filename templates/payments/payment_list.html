@@ -7,7 +7,7 @@
 <div class="dash-greeting">
   <div>
     <div class="dash-greeting-title">Payments</div>
-    <div class="dash-greeting-sub">{{ total }} transaction{{ total|pluralize }} · Total: <strong style="color:var(--color-emerald-600)">${{ total_amount|floatformat:2 }}</strong></div>
+    <div class="dash-greeting-sub">{{ total }} transaction{{ total|pluralize }} · Total: <strong style="color:var(--color-emerald-600)">₦{{ total_amount|floatformat:2 }}</strong></div>
   </div>
   <a href="{% url 'payments:create' %}" class="dbtn dbtn-primary" style="padding:.5rem 1.25rem;font-size:.875rem">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
@@ -66,7 +66,7 @@
           <td class="dtable-secondary">{{ p.reference_number|default:"—" }}</td>
           <td class="dtable-secondary">{{ p.payment_date|date:"M d, Y" }}</td>
           <td style="text-align:right;font-weight:700;color:{% if p.payment_type == 'refund' %}var(--color-rose-600){% else %}var(--color-emerald-600){% endif %}">
-            {% if p.payment_type == 'refund' %}-{% endif %}${{ p.amount }}
+            {% if p.payment_type == 'refund' %}-{% endif %}₦{{ p.amount }}
           </td>
           <td>
             <div style="display:flex;gap:.25rem">

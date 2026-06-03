@@ -51,7 +51,7 @@ class Payment(models.Model):
         verbose_name_plural = "Payments"
     
     def __str__(self):
-        return f"Payment {self.payment_id} - {self.job.job_id} - ${self.amount}"
+        return f"Payment {self.payment_id} - {self.job.job_id} - ₦{self.amount}"
     
     def get_absolute_url(self):
         return reverse('payments:detail', kwargs={'pk': self.payment_id})

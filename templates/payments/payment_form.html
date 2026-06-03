@@ -27,7 +27,7 @@
             <option value="{{ j.job_id }}"
               {% if payment and payment.job_id == j.job_id %}selected
               {% elif preselected_job and preselected_job.job_id == j.job_id %}selected{% endif %}>
-              {{ j.job_id }} — {{ j.customer.name }} ({{ j.get_status_display }}) · Bal: ${{ j.outstanding_balance }}
+              {{ j.job_id }} — {{ j.customer.name }} ({{ j.get_status_display }}) · Bal: ₦{{ j.outstanding_balance }}
             </option>
             {% endfor %}
           </select>

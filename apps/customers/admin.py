@@ -34,5 +34,5 @@ class CustomerAdmin(admin.ModelAdmin):
     total_jobs.short_description = 'Total Jobs'
     
     def total_spent(self, obj):
-        return f"${obj.total_spent:.2f}"
+        return f"₦{obj.total_spent:.2f}"
     total_spent.short_description = 'Total Spent'

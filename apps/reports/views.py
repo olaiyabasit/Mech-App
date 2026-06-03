@@ -50,7 +50,7 @@ def jobs_report_pdf(request):
     • Total Jobs: {total_jobs}
     • Completed Jobs: {completed_jobs}
     • Pending Jobs: {pending_jobs}
-    • Total Revenue: ${total_revenue:,.2f}
+    • Total Revenue: ₦{total_revenue:,.2f}
     """
     summary = Paragraph(summary_text, styles['Normal'])
     elements.append(summary)
@@ -65,8 +65,8 @@ def jobs_report_pdf(request):
             job.customer.name[:20],  # Truncate long names
             job.get_job_type_display(),
             job.get_status_display(),
-            f"${job.total_cost}",
-            f"${job.outstanding_balance}"
+            f"₦{job.total_cost}",
+            f"₦{job.outstanding_balance}"
         ])
     
     # Create table
@@ -108,7 +108,7 @@ def customers_export_csv(request):
             customer.phone or '',
             customer.address or '',
             jobs_count,
-            f"${total_spent:.2f}"
+            f"₦{total_spent:.2f}"
         ])
     
     return response
@@ -148,11 +148,11 @@ def financial_report_pdf(request):
     # Financial summary table
     financial_data = [
         ['Metric', 'Amount'],
-        ['Total Revenue (All Jobs)', f'${total_revenue:,.2f}'],
-        ['Total Collected', f'${total_collected:,.2f}'],
-        ['Outstanding Balance', f'${outstanding_balance:,.2f}'],
-        ['Completed Jobs Revenue', f'${completed_revenue:,.2f}'],
-        ['Pending Jobs Value', f'${pending_revenue:,.2f}'],
+        ['Total Revenue (All Jobs)', f'₦{total_revenue:,.2f}'],
+        ['Total Collected', f'₦{total_collected:,.2f}'],
+        ['Outstanding Balance', f'₦{outstanding_balance:,.2f}'],
+        ['Completed Jobs Revenue', f'₦{completed_revenue:,.2f}'],
+        ['Pending Jobs Value', f'₦{pending_revenue:,.2f}'],
         ['Collection Rate', f'{(total_collected/total_revenue*100):.1f}%' if total_revenue > 0 else '0%']
     ]
     
@@ -185,7 +185,7 @@ def financial_report_pdf(request):
             payment.payment_date.strftime('%m/%d/%Y'),
             payment.job.job_id,
             payment.job.customer.name[:15],
-            f'${payment.amount}',
+            f'₦{payment.amount}',
             payment.get_payment_method_display()
         ])
     

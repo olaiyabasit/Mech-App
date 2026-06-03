@@ -28,7 +28,7 @@
     <div class="dkpi-inner">
       <div class="dkpi-left">
         <div class="dkpi-label">Total Revenue</div>
-        <div class="dkpi-value">${{ total_revenue|floatformat:0 }}</div>
+        <div class="dkpi-value">₦{{ total_revenue|floatformat:0 }}</div>
         <div class="dkpi-sub">Lifetime earnings</div>
       </div>
       <div class="dkpi-icon">
@@ -58,7 +58,7 @@
     <div class="dkpi-inner">
       <div class="dkpi-left">
         <div class="dkpi-label">Outstanding</div>
-        <div class="dkpi-value">${{ outstanding_balance|floatformat:0 }}</div>
+        <div class="dkpi-value">₦{{ outstanding_balance|floatformat:0 }}</div>
         <div class="dkpi-sub">Pending collections</div>
       </div>
       <div class="dkpi-icon">
@@ -129,7 +129,7 @@
       </div>
 
       <div style="padding:1rem;background:var(--color-emerald-50);border:1px solid var(--color-emerald-100);border-radius:10px;text-align:center">
-        <div style="font-size:1.5rem;font-weight:800;color:var(--color-emerald-600)">${{ total_collected|floatformat:0 }}</div>
+        <div style="font-size:1.5rem;font-weight:800;color:var(--color-emerald-600)">₦{{ total_collected|floatformat:0 }}</div>
         <div style="font-size:.8125rem;color:var(--color-emerald-700);margin-top:.25rem;font-weight:600">Total Collected</div>
       </div>
 
@@ -139,7 +139,7 @@
       </div>
 
       <div style="padding:1rem;background:var(--color-amber-50);border:1px solid var(--color-amber-100);border-radius:10px;text-align:center">
-        <div style="font-size:1.5rem;font-weight:800;color:var(--color-amber-700)">${{ outstanding_balance|floatformat:0 }}</div>
+        <div style="font-size:1.5rem;font-weight:800;color:var(--color-amber-700)">₦{{ outstanding_balance|floatformat:0 }}</div>
         <div style="font-size:.8125rem;color:var(--color-amber-700);margin-top:.25rem;font-weight:600">Outstanding</div>
       </div>
 
@@ -217,7 +217,7 @@
     <div style="padding:1rem;background:var(--color-ink-25);border:1px solid var(--color-ink-100);border-radius:10px;text-align:center">
       <div style="font-size:1.25rem;font-weight:800;color:var(--color-ink-900)">{{ pm.count }}</div>
       <div style="font-size:.8125rem;color:var(--color-ink-500);font-weight:600;margin-top:.25rem">{{ pm.payment_method|title }}</div>
-      <div style="font-size:.75rem;color:var(--color-emerald-600);font-weight:700;margin-top:.125rem">${{ pm.total|floatformat:0 }}</div>
+      <div style="font-size:.75rem;color:var(--color-emerald-600);font-weight:700;margin-top:.125rem">₦{{ pm.total|floatformat:0 }}</div>
     </div>
     {% endfor %}
   </div>

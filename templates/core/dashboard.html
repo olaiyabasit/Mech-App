@@ -27,7 +27,7 @@
     <div class="dkpi-inner">
       <div class="dkpi-left">
         <div class="dkpi-label">Total Revenue</div>
-        <div class="dkpi-value">${{ total_revenue|floatformat:0 }}</div>
+        <div class="dkpi-value">₦{{ total_revenue|floatformat:0 }}</div>
         <div class="dkpi-sub">
           {% if revenue_growth >= 0 %}
             <span class="dkpi-badge dkpi-badge-up">↑ {{ revenue_growth }}%</span>
@@ -49,7 +49,7 @@
     <div class="dkpi-inner">
       <div class="dkpi-left">
         <div class="dkpi-label">This Month</div>
-        <div class="dkpi-value">${{ monthly_revenue|floatformat:0 }}</div>
+        <div class="dkpi-value">₦{{ monthly_revenue|floatformat:0 }}</div>
         <div class="dkpi-sub">{{ job_stats.this_month }} jobs delivered</div>
       </div>
       <div class="dkpi-icon">
@@ -64,7 +64,7 @@
     <div class="dkpi-inner">
       <div class="dkpi-left">
         <div class="dkpi-label">Outstanding</div>
-        <div class="dkpi-value">${{ outstanding_balance|floatformat:0 }}</div>
+        <div class="dkpi-value">₦{{ outstanding_balance|floatformat:0 }}</div>
         <div class="dkpi-sub">{{ collection_rate }}% collected</div>
       </div>
       <div class="dkpi-icon">
@@ -118,12 +118,12 @@
   </div>
   <div class="dmetric-div"></div>
   <div class="dmetric">
-    <div class="dmetric-val">${{ average_job_value|floatformat:0 }}</div>
+    <div class="dmetric-val">₦{{ average_job_value|floatformat:0 }}</div>
     <div class="dmetric-lbl">Avg Job Value</div>
   </div>
   <div class="dmetric-div"></div>
   <div class="dmetric">
-    <div class="dmetric-val" style="color:var(--color-emerald-600)">${{ payments_today|floatformat:0 }}</div>
+    <div class="dmetric-val" style="color:var(--color-emerald-600)">₦{{ payments_today|floatformat:0 }}</div>
     <div class="dmetric-lbl">Paid Today</div>
   </div>
   <div class="dmetric-div"></div>
@@ -325,9 +325,9 @@
               </td>
               <td class="dtable-secondary">{{ job.created_date|date:"M d, Y" }}</td>
               <td style="text-align:right">
-                <div class="dtable-primary" style="font-weight:700">${{ job.total_cost }}</div>
+                <div class="dtable-primary" style="font-weight:700">₦{{ job.total_cost }}</div>
                 {% if job.outstanding_balance > 0 %}
-                  <div style="font-size:.7rem;color:var(--color-amber-600)">${{ job.outstanding_balance }} due</div>
+                  <div style="font-size:.7rem;color:var(--color-amber-600)">₦{{ job.outstanding_balance }} due</div>
                 {% endif %}
               </td>
               <td>
@@ -389,7 +389,7 @@
               </td>
               <td class="dtable-secondary">{{ p.payment_date|date:"M d, Y" }}</td>
               <td style="text-align:right">
-                <span style="font-weight:700;color:var(--color-emerald-600)">${{ p.amount }}</span>
+                <span style="font-weight:700;color:var(--color-emerald-600)">₦{{ p.amount }}</span>
               </td>
             </tr>
             {% endfor %}
@@ -500,7 +500,7 @@
           <div class="dtable-secondary">{{ c.job_count }} job{{ c.job_count|pluralize }}</div>
         </div>
         <div style="text-align:right;flex-shrink:0">
-          <div style="font-weight:700;font-size:.875rem">${{ c.total_value|floatformat:0 }}</div>
+          <div style="font-weight:700;font-size:.875rem">₦{{ c.total_value|floatformat:0 }}</div>
         </div>
       </a>
       {% endfor %}
@@ -537,11 +537,11 @@
       <div class="dinsight-list">
         <div class="dinsight-row">
           <span class="dinsight-lbl">Avg Job Value</span>
-          <span class="dinsight-val">${{ average_job_value|floatformat:0 }}</span>
+          <span class="dinsight-val">₦{{ average_job_value|floatformat:0 }}</span>
         </div>
         <div class="dinsight-row">
           <span class="dinsight-lbl">Paid This Month</span>
-          <span class="dinsight-val">${{ payments_this_month|floatformat:0 }}</span>
+          <span class="dinsight-val">₦{{ payments_this_month|floatformat:0 }}</span>
         </div>
         <div class="dinsight-row">
           <span class="dinsight-lbl">Total Customers</span>
