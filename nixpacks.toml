@@ -5,10 +5,7 @@ nixPkgs = ["python313"]
 cmds = ["pip install -r requirements.txt"]
 
 [phases.build]
-cmds = [
-    "DJANGO_SETTINGS_MODULE=winki_project.settings.production python build_tailwind.py",
-    "DJANGO_SETTINGS_MODULE=winki_project.settings.production python manage.py collectstatic --noinput -v 2"
-]
+cmds = ["bash build.sh"]
 
 [start]
 cmd = "gunicorn winki_project.wsgi --log-file -"
