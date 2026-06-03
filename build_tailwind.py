@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 """
-Simple build script to copy Tailwind styles for development.
-This is a workaround for the django-tailwind build timeout issue.
+Production build script for Tailwind CSS v4.
+Compiles Tailwind CSS using the standalone CLI via pytailwindcss.
 """
 
 import os
-import shutil
+import sys
+import subprocess
 from pathlib import Path
 
 # Define paths
@@ -16,77 +17,72 @@ STATIC_OUTPUT_DIR = THEME_DIR / "static" / "css"
 STATIC_OUTPUT_FILE = STATIC_OUTPUT_DIR / "styles.css"
 
 def build_tailwind():
-    """Copy the Tailwind source file to the static output directory."""
-    print("Building Tailwind CSS...")
-
+    """Compile Tailwind CSS using pytailwindcss CLI."""
+    print("🔧 Building Tailwind CSS for production...")
+    print(f"📁 Source: {STATIC_SRC}")
+    print(f"📁 Output: {STATIC_OUTPUT_FILE}")
+    
+    # Verify source file exists
+    if not STATIC_SRC.exists():
+        print(f"❌ Error: Source file not found: {STATIC_SRC}")
+        return False
+    
     # Create output directory if it doesn't exist
     STATIC_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-    # Copy the source CSS file
-    if STATIC_SRC.exists():
-        shutil.copy2(STATIC_SRC, STATIC_OUTPUT_FILE)
-        print(f"✅ Copied {STATIC_SRC} to {STATIC_OUTPUT_FILE}")
-    else:
-        print(f"❌ Source file not found: {STATIC_SRC}")
+    
+    try:
+        # Use pytailwindcss to compile the CSS
+        # The -i flag specifies input, -o specifies output
+        # The --minify flag optimizes for production
+        print("⚙️  Compiling Tailwind CSS...")
+        
+        result = subprocess.run(
+            [
+                sys.executable, "-m", "pytailwindcss",
+                "-i", str(STATIC_SRC),
+                "-o", str(STATIC_OUTPUT_FILE),
+                "--minify"
+            ],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        
+        # Check if output file was created
+        if STATIC_OUTPUT_FILE.exists():
+            file_size = STATIC_OUTPUT_FILE.stat().st_size
+            print(f"✅ Tailwind CSS compiled successfully!")
+            print(f"📊 Output file size: {file_size:,} bytes")
+            
+            # Verify the output has reasonable content
+            if file_size < 1000:
+                print(f"⚠️  Warning: Output file seems too small ({file_size} bytes)")
+                print("    This might indicate a compilation issue.")
+                return False
+            
+            return True
+        else:
+            print(f"❌ Error: Output file was not created: {STATIC_OUTPUT_FILE}")
+            return False
+            
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error: Tailwind compilation failed!")
+        print(f"   Exit code: {e.returncode}")
+        if e.stdout:
+            print(f"   stdout: {e.stdout}")
+        if e.stderr:
+            print(f"   stderr: {e.stderr}")
         return False
-
-    
-    # Add basic CSS reset and Tailwind classes
-    with open(STATIC_OUTPUT_FILE, 'a') as f:
-        f.write("""
-
-/* Additional basic styles for development */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-}
-
-.btn {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    background-color: #000;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 0.25rem;
-    border: 1px solid #000;
-    transition: all 0.2s;
-}
-
-.btn:hover {
-    background-color: #fff;
-    color: #000;
-}
-
-.card {
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.table th,
-.table td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid #e5e5e5;
-}
-
-.table th {
-    font-weight: 600;
-    background-color: #f9f9f9;
-}
-""")
-    
-    print("✅ Tailwind CSS build completed!")
-    return True
+    except Exception as e:
+        print(f"❌ Error: Unexpected error during compilation: {e}")
+        return False
 
 if __name__ == "__main__":
     success = build_tailwind()
-    exit(0 if success else 1)
+    
+    if success:
+        print("🎉 Build completed successfully!")
+        sys.exit(0)
+    else:
+        print("💥 Build failed!")
+        sys.exit(1)
