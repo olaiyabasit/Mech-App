@@ -1,2 +1,1 @@
-web: gunicorn winki_project.wsgi --log-file -
-release: python manage.py migrate
+web: bash build.sh && gunicorn winki_project.wsgi --log-file -
