@@ -222,6 +222,9 @@ body {
   background: none;
   width: 100%;
   text-align: left;
+  /* Touch-friendly tap target */
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .sidebar-item:hover {
@@ -343,6 +346,20 @@ body {
   }
   .page-body {
     padding: 1rem;
+  }
+  
+  /* Topbar adjustments */
+  .topbar {
+    padding: 0 1rem;
+    height: 56px;
+  }
+  .topbar-title {
+    font-size: .875rem;
+  }
+  
+  /* Make links and buttons more touch-friendly */
+  a, button, .btn {
+    min-height: 44px;
   }
 }
 
@@ -648,6 +665,10 @@ body {
   cursor: pointer;
   border: 1px solid transparent;
   white-space: nowrap;
+  /* Touch-friendly */
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .btn-primary {
@@ -1579,14 +1600,113 @@ body {
   .dash-main-grid { grid-template-columns: 1fr; }
   .dash-col-side { display: grid; grid-template-columns: 1fr 1fr; }
 }
+
 @media (max-width: 768px) {
-  .dash-kpi-grid { grid-template-columns: 1fr 1fr; }
-  .dpipeline { grid-template-columns: 1fr 1fr; }
-  .dash-metrics-row { gap: 0; padding: .75rem 1rem; }
-  .dmetric { min-width: 64px; }
+  /* Dashboard grids */
+  .dash-kpi-grid { 
+    grid-template-columns: 1fr 1fr; 
+    gap: .75rem;
+  }
+  .dpipeline { 
+    grid-template-columns: 1fr 1fr; 
+    gap: .625rem;
+  }
+  
+  /* Metrics row */
+  .dash-metrics-row { 
+    gap: 0; 
+    padding: .75rem 1rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dmetric { 
+    min-width: 64px;
+    padding: .25rem .375rem;
+  }
+  .dmetric-val { font-size: 1.125rem; }
+  .dmetric-lbl { font-size: .625rem; }
+  
+  /* Side column */
   .dash-col-side { grid-template-columns: 1fr; }
+  
+  /* Cards */
+  .dcard { 
+    padding: 1rem 1.25rem; 
+    border-radius: 12px;
+  }
+  
+  /* Tables */
+  .dtable-wrap { 
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dtable { font-size: .8125rem; }
+  .dtable th, .dtable td { 
+    padding: .625rem .75rem; 
+    white-space: nowrap;
+  }
+  
+  /* Greeting */
+  .dash-greeting {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .dash-greeting > div:last-child {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  /* KPI cards on dashboard */
+  .dkpi {
+    padding: 1rem 1.25rem;
+  }
+  .dkpi-value { font-size: 1.5rem; }
+  .dkpi-icon { 
+    width: 38px; 
+    height: 38px; 
+  }
 }
+
 @media (max-width: 480px) {
-  .dash-kpi-grid { grid-template-columns: 1fr; }
-  .dpipeline { grid-template-columns: 1fr 1fr; }
+  /* Single column layouts */
+  .dash-kpi-grid { 
+    grid-template-columns: 1fr; 
+    gap: .75rem;
+  }
+  .dpipeline { 
+    grid-template-columns: 1fr 1fr; 
+    gap: .5rem;
+  }
+  
+  /* QA grid */
+  .dqa-grid { 
+    grid-template-columns: 1fr;
+    gap: .5rem;
+  }
+  
+  /* Smaller spacing */
+  .page-body { padding: .75rem; }
+  
+  /* Hide less critical info on tiny screens */
+  .dmetric:nth-child(n+6) { display: none; }
+  
+  /* Stack greeting items */
+  .dash-greeting-date {
+    font-size: .75rem;
+    padding: .3rem .625rem;
+  }
+  
+  /* Smaller buttons */
+  .dbtn {
+    font-size: .75rem;
+    padding: .375rem .75rem;
+  }
+  
+  /* Pipeline items */
+  .dpipe-item {
+    padding: .75rem .875rem;
+  }
+  .dpipe-count { font-size: 1.5rem; }
+  .dpipe-label { font-size: .6875rem; }
 }
