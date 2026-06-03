@@ -6,9 +6,13 @@ cmds = ["pip install -r requirements.txt"]
 
 [phases.build]
 cmds = [
-    "python build_tailwind.py",
-    "python manage.py collectstatic --noinput -v 2"
+    "DJANGO_SETTINGS_MODULE=winki_project.settings.production python build_tailwind.py",
+    "DJANGO_SETTINGS_MODULE=winki_project.settings.production python manage.py collectstatic --noinput -v 2"
 ]
 
 [start]
 cmd = "gunicorn winki_project.wsgi --log-file -"
+
+[variables]
+DJANGO_SETTINGS_MODULE = "winki_project.settings.production"
+PYTHONUNBUFFERED = "1"
