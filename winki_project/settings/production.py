@@ -21,11 +21,16 @@ X_FRAME_OPTIONS = 'DENY'
 
 # Database Configuration
 DATABASES = {
-    'default': dj_database_url.config(env='DATABASE_URL', conn_max_age=600)
+    'default': dj_database_url.config(
+        env='DATABASE_URL',
+        conn_max_age=600,
+        default='sqlite:///db.sqlite3'  # Fallback for build/collectstatic
+    )
 }
 
 # Static Files for Production
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_ROOT is inherited from base.py (BASE_DIR / 'staticfiles')
+# No need to override unless using a different location
 
 # Django 5.2 uses STORAGES dict — the old STATICFILES_STORAGE key is ignored.
 # Use WhiteNoise compressed manifest storage for hashed filenames + gzip.
