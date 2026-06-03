@@ -1,1 +1,1 @@
-web: bash build.sh && gunicorn winki_project.wsgi --log-file -
+web: gunicorn winki_project.wsgi --log-file -

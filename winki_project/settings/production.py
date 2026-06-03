@@ -32,6 +32,10 @@ DATABASES = {
 # STATIC_ROOT is inherited from base.py (BASE_DIR / 'staticfiles')
 # No need to override unless using a different location
 
+# WhiteNoise configuration for serving static files
+WHITENOISE_USE_FINDERS = True  # Allow WhiteNoise to use STATICFILES_FINDERS
+WHITENOISE_AUTOREFRESH = True  # Development-like behavior in production (finds files dynamically)
+
 # Django 5.2 uses STORAGES dict — the old STATICFILES_STORAGE key is ignored.
 # Use WhiteNoise compressed manifest storage for hashed filenames + gzip.
 STORAGES = {
